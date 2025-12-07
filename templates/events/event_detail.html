@@ -1,0 +1,541 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .event-detail {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .event-detail-header {
+        margin-bottom: 24px;
+    }
+
+    .event-detail-header h1 {
+        font-size: 26px;
+        margin-bottom: 8px;
+    }
+
+    .event-info {
+        display: flex;
+        gap: 16px;
+        font-size: 14px;
+        color: #717171;
+    }
+
+    .favorite-btn {
+        background: none;
+        border: 1px solid #222;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .favorite-btn:hover {
+        background: #f7f7f7;
+    }
+
+    .favorite-btn.active {
+        background: #FFE6EA;
+        border-color: #FF385C;
+        color: #FF385C;
+    }
+
+    .event-images {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 8px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 48px;
+        height: 500px;
+    }
+
+    .main-image {
+        grid-row: span 2;
+    }
+
+    .event-images img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+    }
+
+    .event-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 80px;
+    }
+
+    .event-description h2 {
+        font-size: 22px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .event-description p {
+        color: #717171;
+        line-height: 1.8;
+        margin-bottom: 24px;
+    }
+
+    .event-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 24px 0;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: start;
+        gap: 12px;
+    }
+
+    .meta-icon {
+        font-size: 24px;
+    }
+
+    .meta-info strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .meta-info span {
+        color: #717171;
+        font-size: 14px;
+    }
+
+    /* Booking Card */
+    .booking-card {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 24px;
+        position: sticky;
+        top: 100px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    .booking-price {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+
+    .booking-dates {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .date-input {
+        padding: 12px;
+    }
+
+    .date-input label {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .date-input input,
+    .date-input select {
+        border: none;
+        outline: none;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .reserve-btn {
+        background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .reserve-btn:hover {
+        transform: scale(1.02);
+    }
+
+    .reserve-btn:disabled {
+        background: #ddd;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .booking-note {
+        text-align: center;
+        color: #717171;
+        font-size: 14px;
+        margin-top: 16px;
+    }
+
+    .tickets-remaining {
+        color: #FF385C;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+        margin-top: 48px;
+        padding-top: 48px;
+        border-top: 1px solid #ddd;
+    }
+
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .review-card {
+        padding: 24px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .reviewer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .reviewer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .review-rating {
+        display: flex;
+        gap: 4px;
+    }
+
+    .review-comment {
+        color: #717171;
+        line-height: 1.6;
+    }
+
+    .add-review-btn {
+        background: white;
+        border: 1px solid #222;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .add-review-btn:hover {
+        background: #f7f7f7;
+    }
+
+    @media (max-width: 768px) {
+        .event-content {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-card {
+            position: static;
+        }
+
+        .event-images {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+
+        .event-images img {
+            height: 300px;
+        }
+
+        .event-meta {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="event-detail">
+        <div class="event-detail-header">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <h1>{{ event.title }}</h1>
+                    <div class="event-info">
+                        {% if average_rating > 0 %}
+                            <span>⭐ {{ average_rating|floatformat:1 }} ({{ review_count }} review{{ review_count|pluralize }})</span>
+                        {% endif %}
+                        <span>📍 {{ event.location }}</span>
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                <button class="favorite-btn {% if is_favorited %}active{% endif %}" 
+                        onclick="toggleFavorite('{{ event.slug }}', this)">
+                    ❤️ {% if is_favorited %}Saved{% else %}Save{% endif %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="event-images">
+            {% if event.images.all %}
+                {% for image in event.images.all|slice:":5" %}
+                    <img src="{{ image.image.url }}" alt="{{ event.title }}" 
+                         {% if forloop.first %}class="main-image"{% endif %}>
+                {% endfor %}
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800" alt="{{ event.title }}" class="main-image">
+                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400" alt="Event">
+                <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400" alt="Event">
+                <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400" alt="Event">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400" alt="Event">
+            {% endif %}
+        </div>
+
+        <div class="event-content">
+            <div class="event-description">
+                <h2>About this event</h2>
+                <p>{{ event.description|linebreaks }}</p>
+
+                <div class="event-meta">
+                    <div class="meta-item">
+                        <div class="meta-icon">📅</div>
+                        <div class="meta-info">
+                            <strong>Date</strong>
+                            <span>
+                                {% if event.start_date == event.end_date %}
+                                    {{ event.start_date|date:"F d, Y" }}
+                                {% else %}
+                                    {{ event.start_date|date:"F d" }} - {{ event.end_date|date:"d, Y" }}
+                                {% endif %}
+                                {% if event.start_time %}
+                                    at {{ event.start_time|time:"g:i A" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <div class="meta-icon">📍</div>
+                        <div class="meta-info">
+                            <strong>Location</strong>
+                            <span>{{ event.location }}</span>
+                            <span>{{ event.city.name }}, {{ event.city.state }}</span>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <div class="meta-icon">🎫</div>
+                        <div class="meta-info">
+                            <strong>Capacity</strong>
+                            <span>{{ event.capacity }} total</span>
+                            <span>{{ event.tickets_remaining }} available</span>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <div class="meta-icon">👤</div>
+                        <div class="meta-info">
+                            <strong>Hosted by</strong>
+                            <span>{{ event.host.get_full_name|default:event.host.username }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if event.included %}
+                <h2>What's included</h2>
+                <p>{{ event.included|linebreaks }}</p>
+                {% endif %}
+
+                {% if event.things_to_know %}
+                <h2>Things to know</h2>
+                <p>{{ event.things_to_know|linebreaks }}</p>
+                {% endif %}
+
+                {% if event.cancellation_policy %}
+                <p><strong>Cancellation policy:</strong> {{ event.cancellation_policy }}</p>
+                {% endif %}
+
+                {% if event.age_restriction %}
+                <p><strong>Age restriction:</strong> {{ event.age_restriction }}</p>
+                {% endif %}
+
+                <!-- Reviews Section -->
+                <div class="reviews-section">
+                    <div class="reviews-header">
+                        <h2>⭐ {{ average_rating|floatformat:1 }} · {{ review_count }} review{{ review_count|pluralize }}</h2>
+                        {% if user.is_authenticated %}
+                            <button class="add-review-btn" onclick="document.getElementById('reviewForm').scrollIntoView({behavior: 'smooth'})">
+                                Write a Review
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    {% for review in reviews %}
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    {{ review.user.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <strong>{{ review.user.username }}</strong>
+                                    <div style="font-size: 12px; color: #717171;">
+                                        {{ review.created_at|date:"F Y" }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}⭐{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="review-comment">{{ review.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <p style="color: #717171;">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
+
+                    {% if user.is_authenticated %}
+                    <div id="reviewForm" style="margin-top: 32px; padding-top: 32px; border-top: 1px solid #ddd;">
+                        <h3>Leave a Review</h3>
+                        <form method="POST" action="{% url 'add_review' event.slug %}">
+                            {% csrf_token %}
+                            <div style="margin: 20px 0;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating</label>
+                                <div style="display: flex; gap: 10px;">
+                                    {% for i in "12345" %}
+                                    <label>
+                                        <input type="radio" name="rating" value="{{ forloop.counter }}" required>
+                                        {{ forloop.counter }}★
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div style="margin: 20px 0;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Your Review</label>
+                                <textarea name="comment" rows="4" required 
+                                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+                            </div>
+                            <button type="submit" class="add-review-btn">Submit Review</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <div class="booking-card">
+                    <div class="booking-price">
+                        {{ event.price }} <span style="font-size: 16px; font-weight: normal;">per ticket</span>
+                    </div>
+
+                    {% if event.is_sold_out %}
+                        <div style="background: #f8d7da; padding: 16px; border-radius: 8px; text-align: center; color: #721c24; font-weight: 600;">
+                            Sold Out
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{% url 'create_booking' event.slug %}">
+                            {% csrf_token %}
+                            <div class="booking-dates">
+                                <div class="date-input">
+                                    <label>EVENT DATE</label>
+                                    <input type="date" name="event_date" 
+                                           min="{{ event.start_date|date:'Y-m-d' }}" 
+                                           max="{{ event.end_date|date:'Y-m-d' }}" 
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="booking-dates">
+                                <div class="date-input">
+                                    <label>NUMBER OF TICKETS</label>
+                                    <input type="number" name="tickets" min="1" 
+                                           max="{{ event.tickets_remaining }}" 
+                                           value="1" required>
+                                </div>
+                            </div>
+
+                            <p class="tickets-remaining">
+                                Only {{ event.tickets_remaining }} ticket{{ event.tickets_remaining|pluralize }} left!
+                            </p>
+
+                            {% if user.is_authenticated %}
+                                <button type="submit" class="reserve-btn">Reserve</button>
+                                <div class="booking-note">You won't be charged yet</div>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="reserve-btn" style="display: block; text-align: center; text-decoration: none;">
+                                    Login to Book
+                                </a>
+                            {% endif %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleFavorite(slug, button) {
+    fetch(`/events/event/${slug}/favorite/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.toggle('active');
+            button.innerHTML = data.is_favorited ? '❤️ Saved' : '❤️ Save';
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

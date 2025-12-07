@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - {{ user.username }} - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .profile-header {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 32px;
+        display: flex;
+        gap: 32px;
+        align-items: start;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-info h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .profile-meta {
+        color: #717171;
+        margin-bottom: 16px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .profile-bio {
+        color: #222;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: #FF385C;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #E31C5F;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #222;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background: #f7f7f7;
+    }
+
+    .host-badge {
+        display: inline-block;
+        background: #FFE6EA;
+        color: #FF385C;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #FF385C;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        color: #717171;
+        font-size: 14px;
+    }
+
+    .profile-section {
+        background: white;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-header h2 {
+        font-size: 24px;
+    }
+
+    .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .item-card {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .item-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .item-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .item-content {
+        padding: 16px;
+    }
+
+    .item-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .item-meta {
+        font-size: 14px;
+        color: #717171;
+        margin-bottom: 4px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #717171;
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-actions {
+            justify-content: center;
+        }
+
+        .profile-meta {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+
+            <div class="profile-info">
+                <h1>
+                    {% if user.first_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                    {% if user.is_host %}
+                        <span class="host-badge">🎉 Event Host</span>
+                    {% endif %}
+                </h1>
+
+                <div class="profile-meta">
+                    <span>📧 {{ user.email }}</span>
+                    {% if user.phone %}
+                        <span>📱 {{ user.phone }}</span>
+                    {% endif %}
+                    <span>📅 Joined {{ user.date_joined|date:"M Y" }}</span>
+                </div>
+
+                {% if user.bio %}
+                <p class="profile-bio">{{ user.bio }}</p>
+                {% endif %}
+
+                <div class="profile-actions">
+                    <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
+                    {% if user.is_host %}
+                        <a href="{% url 'my_events' %}" class="btn btn-secondary">My Events</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-value">{{ bookings.count }}</div>
+                <div class="stat-label">Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ favorites.count }}</div>
+                <div class="stat-label">Favorites</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ reviews.count }}</div>
+                <div class="stat-label">Reviews</div>
+            </div>
+            {% if user.is_host %}
+            <div class="stat-card">
+                <div class="stat-value">{{ hosted_events.count }}</div>
+                <div class="stat-label">Events Hosted</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="profile-section">
+            <div class="section-header">
+                <h2>Recent Bookings</h2>
+                <a href="{% url 'my_bookings' %}" class="btn btn-secondary">View All</a>
+            </div>
+
+            {% if bookings %}
+            <div class="item-grid">
+                {% for booking in bookings %}
+                <a href="{% url 'event_detail' booking.event.slug %}" class="item-card" style="text-decoration: none; color: inherit;">
+                    {% if booking.event.images.first %}
+                        <img src="{{ booking.event.images.first.image.url }}" alt="{{ booking.event.title }}" class="item-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300" alt="{{ booking.event.title }}" class="item-image">
+                    {% endif %}
+                    <div class="item-content">
+                        <div class="item-title">{{ booking.event.title }}</div>
+                        <div class="item-meta">📅 {{ booking.event_date|date:"M d, Y" }}</div>
+                        <div class="item-meta">🎫 {{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</div>
+                        <div class="item-meta">Status: {{ booking.get_status_display }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🎫</div>
+                <p>No bookings yet. Start exploring events!</p>
+                <a href="{% url 'event_list' %}" class="btn btn-primary">Browse Events</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Favorite Events -->
+        <div class="profile-section">
+            <div class="section-header">
+                <h2>Favorite Events</h2>
+            </div>
+
+            {% if favorites %}
+            <div class="item-grid">
+                {% for favorite in favorites %}
+                <a href="{% url 'event_detail' favorite.event.slug %}" class="item-card" style="text-decoration: none; color: inherit;">
+                    {% if favorite.event.images.first %}
+                        <img src="{{ favorite.event.images.first.image.url }}" alt="{{ favorite.event.title }}" class="item-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300" alt="{{ favorite.event.title }}" class="item-image">
+                    {% endif %}
+                    <div class="item-content">
+                        <div class="item-title">{{ favorite.event.title }}</div>
+                        <div class="item-meta">📍 {{ favorite.event.city.name }}</div>
+                        <div class="item-meta">💰 ${{ favorite.event.price }}</div>
+                        <div class="item-meta">📅 {{ favorite.event.start_date|date:"M d, Y" }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">❤️</div>
+                <p>No favorite events yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Reviews -->
+        {% if reviews %}
+        <div class="profile-section">
+            <div class="section-header">
+                <h2>Recent Reviews</h2>
+            </div>
+
+            {% for review in reviews %}
+            <div style="border-bottom: 1px solid #f0f0f0; padding: 20px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <a href="{% url 'event_detail' review.event.slug %}" style="font-weight: 600; color: #222; text-decoration: none;">
+                        {{ review.event.title }}
+                    </a>
+                    <span>
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}⭐{% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <p style="color: #717171; line-height: 1.6;">{{ review.comment }}</p>
+                <p style="color: #999; font-size: 13px; margin-top: 8px;">{{ review.created_at|date:"M d, Y" }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

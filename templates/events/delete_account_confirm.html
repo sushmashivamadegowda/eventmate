@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Account - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
+
+    .delete-card {
+        background: white;
+        border-radius: 16px;
+        padding: 48px 40px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        border: 2px solid #dc3545;
+    }
+
+    .warning-icon {
+        font-size: 64px;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .delete-card h1 {
+        font-size: 28px;
+        color: #dc3545;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+
+    .warning-message {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+    }
+
+    .warning-message h3 {
+        color: #856404;
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .warning-message ul {
+        color: #856404;
+        margin-left: 20px;
+        line-height: 1.8;
+    }
+
+    .account-info {
+        background: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #717171;
+    }
+
+    .info-value {
+        color: #222;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #dc3545;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #c82333;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: start;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding: 16px;
+        background: #fff3cd;
+        border-radius: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        margin-top: 2px;
+    }
+
+    .checkbox-group label {
+        color: #856404;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-delete:hover:not(:disabled) {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-delete:disabled {
+        background: #ddd;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #222;
+        border: 2px solid #ddd;
+    }
+
+    .btn-cancel:hover {
+        background: #f7f7f7;
+        border-color: #222;
+    }
+
+    @media (max-width: 640px) {
+        .delete-card {
+            padding: 32px 24px;
+        }
+
+        .button-group {
+            flex-direction: column-reverse;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="warning-icon">⚠️</div>
+        <h1>Delete Your Account</h1>
+
+        <div class="warning-message">
+            <h3> Warning: This action is permanent and cannot be undone!</h3>
+            <ul>
+                <li>All your personal data will be permanently deleted</li>
+                <li>Your bookings history will be removed</li>
+                <li>Your reviews will be deleted</li>
+                <li>Your favorites will be cleared</li>
+                {% if user.is_host %}
+                <li>Your hosted events will be deactivated</li>
+                <li>Pending bookings will be cancelled</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="account-info">
+            <h3 style="margin-bottom: 16px;">Account Information</h3>
+            <div class="info-row">
+                <span class="info-label">Username:</span>
+                <span class="info-value">{{ user.username }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ user.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Member Since:</span>
+                <span class="info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+            </div>
+            {% if user.is_host %}
+            <div class="info-row">
+                <span class="info-label">Account Type:</span>
+                <span class="info-value">Host Account</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="POST" action="{% url 'delete_account' %}" id="deleteForm">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="confirm_password">Enter Your Password to Confirm *</label>
+                <input 
+                    type="password" 
+                    name="confirm_password" 
+                    id="confirm_password"
+                    placeholder="Enter your password"
+                    required
+                >
+                <small style="color: #717171; font-size: 13px; display: block; margin-top: 4px;">
+                    For security, please enter your password to confirm deletion
+                </small>
+            </div>
+
+            <div class="checkbox-group">
+                <input 
+                    type="checkbox" 
+                    id="confirm_delete" 
+                    name="confirm_delete"
+                    onchange="toggleDeleteButton()"
+                >
+                <label for="confirm_delete">
+                    I understand this action is permanent and cannot be undone. I want to permanently delete my account.
+                </label>
+            </div>
+
+            <div class="button-group">
+                <a href="{% url 'settings' %}" class="btn btn-cancel">
+                    Cancel
+                </a>
+                <button 
+                    type="submit" 
+                    class="btn btn-delete" 
+                    id="deleteButton"
+                    disabled
+                    onclick="return confirmDelete()"
+                >
+                     Permanently Delete Account
+                </button>
+            </div>
+        </form>
+
+        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #ddd; text-align: center;">
+            <p style="color: #717171; font-size: 14px;">
+                Need help? <a href="#" style="color: #FF385C;">Contact Support</a> instead of deleting your account.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDeleteButton() {
+        const checkbox = document.getElementById('confirm_delete');
+        const deleteButton = document.getElementById('deleteButton');
+        deleteButton.disabled = !checkbox.checked;
+    }
+
+    function confirmDelete() {
+        const password = document.getElementById('confirm_password').value;
+        
+        if (!password) {
+            alert('Please enter your password to confirm deletion.');
+            return false;
+        }
+
+        const confirmation = confirm(
+            '⚠️ FINAL WARNING ⚠️\n\n' +
+            'Are you absolutely sure you want to delete your account?\n\n' +
+            'This action is PERMANENT and CANNOT be undone.\n\n' +
+            'Click OK to proceed with deletion, or Cancel to go back.'
+        );
+
+        if (!confirmation) {
+            return false;
+        }
+
+        // Show loading state
+        const deleteButton = document.getElementById('deleteButton');
+        deleteButton.disabled = true;
+        deleteButton.textContent = '🔄 Deleting Account...';
+
+        return true;
+    }
+
+    // Prevent accidental form submission
+    document.getElementById('deleteForm').addEventListener('submit', function(e) {
+        const checkbox = document.getElementById('confirm_delete');
+        if (!checkbox.checked) {
+            e.preventDefault();
+            alert('Please confirm that you understand this action is permanent.');
+            return false;
+        }
+    });
+
+    // Warn user before leaving page
+    let formSubmitted = false;
+    document.getElementById('deleteForm').addEventListener('submit', function() {
+        formSubmitted = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (!formSubmitted && document.getElementById('confirm_password').value) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+</script>
+{% endblock %}

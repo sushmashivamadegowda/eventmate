@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if event %}Edit Event{% else %}Create Event{% endif %} - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-container h1 {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 4px;
+        color: #717171;
+        font-size: 13px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .error {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #ddd;
+    }
+
+    .btn-primary {
+        background: #FF385C;
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #E31C5F;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #222;
+        border: 1px solid #ddd;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-secondary:hover {
+        background: #f7f7f7;
+    }
+
+    .image-upload {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 32px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .image-upload:hover {
+        border-color: #FF385C;
+        background: #fff5f7;
+    }
+
+    .image-upload input[type="file"] {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 24px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1>{% if event %}Edit Event{% else %}Create New Event{% endif %}</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="error" style="margin-bottom: 20px; padding: 12px; background: #f8d7da; border-radius: 8px;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_title">Event Title *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="error">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Description *</label>
+                {{ form.description }}
+                <small>Provide a detailed description of your event</small>
+                {% if form.description.errors %}
+                    <div class="error">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_category">Category *</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="error">{{ form.category.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_city">City *</label>
+                    {{ form.city }}
+                    {% if form.city.errors %}
+                        <div class="error">{{ form.city.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_location">Venue/Location *</label>
+                {{ form.location }}
+                <small>Venue name or full address</small>
+                {% if form.location.errors %}
+                    <div class="error">{{ form.location.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_start_date">Start Date *</label>
+                    {{ form.start_date }}
+                    {% if form.start_date.errors %}
+                        <div class="error">{{ form.start_date.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_end_date">End Date *</label>
+                    {{ form.end_date }}
+                    {% if form.end_date.errors %}
+                        <div class="error">{{ form.end_date.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_start_time">Start Time (Optional)</label>
+                {{ form.start_time }}
+                {% if form.start_time.errors %}
+                    <div class="error">{{ form.start_time.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_price">Price per Ticket  *</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <div class="error">{{ form.price.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_capacity">Total Capacity *</label>
+                    {{ form.capacity }}
+                    <small>Maximum number of attendees</small>
+                    {% if form.capacity.errors %}
+                        <div class="error">{{ form.capacity.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_included">What's Included</label>
+                {{ form.included }}
+                <small>List what's included in the ticket price</small>
+                {% if form.included.errors %}
+                    <div class="error">{{ form.included.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_things_to_know">Things to Know</label>
+                {{ form.things_to_know }}
+                <small>Important information for attendees</small>
+                {% if form.things_to_know.errors %}
+                    <div class="error">{{ form.things_to_know.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_cancellation_policy">Cancellation Policy</label>
+                {{ form.cancellation_policy }}
+                {% if form.cancellation_policy.errors %}
+                    <div class="error">{{ form.cancellation_policy.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_age_restriction">Age Restriction</label>
+                {{ form.age_restriction }}
+                <small>e.g., "All ages", "18+", "21+"</small>
+                {% if form.age_restriction.errors %}
+                    <div class="error">{{ form.age_restriction.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Event Images</label>
+                <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📷</div>
+                    <p style="color: #717171;">Click to upload event images</p>
+                    <small>You can select multiple images</small>
+                    <input type="file" id="imageInput" name="images" multiple accept="image/*">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    {% if event %}Update Event{% else %}Create Event{% endif %}
+                </button>
+                <a href="{% if event %}{% url 'event_detail' event.slug %}{% else %}{% url 'my_events' %}{% endif %}" class="btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preview selected images
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            const uploadDiv = document.querySelector('.image-upload');
+            uploadDiv.querySelector('p').textContent = `${files.length} image${files.length > 1 ? 's' : ''} selected`;
+        }
+    });
+</script>
+{% endblock %}

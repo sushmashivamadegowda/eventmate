@@ -1,0 +1,469 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 900px;
+        margin: 40px auto;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 32px;
+    }
+
+    .payment-form {
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .payment-form h1 {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    .payment-methods {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .payment-method {
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .payment-method:hover {
+        border-color: #FF385C;
+        background: #fff5f7;
+    }
+
+    .payment-method.selected {
+        border-color: #FF385C;
+        background: #fff5f7;
+    }
+
+    .payment-method input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .payment-icon {
+        font-size: 32px;
+    }
+
+    .payment-info {
+        flex: 1;
+    }
+
+    .payment-info h3 {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+
+    .payment-info p {
+        font-size: 13px;
+        color: #717171;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #FF385C;
+        box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 16px;
+    }
+
+    .card-logos {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .card-logo {
+        font-size: 32px;
+    }
+
+    .btn-pay {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .btn-pay:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+    }
+
+    .btn-cancel {
+        width: 100%;
+        padding: 14px;
+        background: white;
+        color: #222;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-top: 12px;
+    }
+
+    .btn-cancel:hover {
+        background: #f7f7f7;
+    }
+
+    .order-summary {
+        background: white;
+        padding: 32px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .order-summary h2 {
+        font-size: 20px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .event-info {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .event-image {
+        width: 100%;
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-bottom: 16px;
+    }
+
+    .event-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .event-detail {
+        font-size: 14px;
+        color: #717171;
+        margin-bottom: 4px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+
+    .summary-label {
+        color: #717171;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: #222;
+    }
+
+    .total-row {
+        background: #f7f7f7;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-label {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .total-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #FF385C;
+    }
+
+    .security-badge {
+        text-align: center;
+        padding: 16px;
+        background: #f7f7f7;
+        border-radius: 8px;
+        margin-top: 24px;
+    }
+
+    .security-badge p {
+        font-size: 13px;
+        color: #717171;
+        margin: 0;
+    }
+
+    @media (max-width: 968px) {
+        .payment-container {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+            order: -1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-container">
+        <!-- Payment Form -->
+        <div class="payment-form">
+            <h1>💳 Complete Payment</h1>
+
+            <form method="POST" action="{% url 'process_payment' booking.id %}" id="paymentForm">
+                {% csrf_token %}
+
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <label class="payment-method selected" onclick="selectPaymentMethod('card')">
+                        <input type="radio" name="payment_method" value="card" checked>
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-info">
+                            <h3>Credit/Debit Card</h3>
+                            <p>Visa, Mastercard, American Express</p>
+                        </div>
+                    </label>
+
+                    <label class="payment-method" onclick="selectPaymentMethod('paypal')">
+                        <input type="radio" name="payment_method" value="paypal">
+                        <div class="payment-icon">🅿️</div>
+                        <div class="payment-info">
+                            <h3>PayPal</h3>
+                            <p>Pay securely with your PayPal account</p>
+                        </div>
+                    </label>
+
+                    <label class="payment-method" onclick="selectPaymentMethod('wallet')">
+                        <input type="radio" name="payment_method" value="wallet">
+                        <div class="payment-icon">👛</div>
+                        <div class="payment-info">
+                            <h3>Digital Wallet</h3>
+                            <p>Apple Pay, Google Pay</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Card Details -->
+                <div id="cardDetails">
+                    <div class="form-group">
+                        <label for="card_number">Card Number</label>
+                        <input 
+                            type="text" 
+                            id="card_number" 
+                            name="card_number"
+                            placeholder="1234 5678 9012 3456"
+                            maxlength="19"
+                            pattern="[0-9\s]+"
+                        >
+                        <div class="card-logos">
+                            <span class="card-logo">💳</span>
+                            <span title="Visa">🔵</span>
+                            <span title="Mastercard">🔴</span>
+                            <span title="Amex">🟢</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card_name">Cardholder Name</label>
+                        <input 
+                            type="text" 
+                            id="card_name" 
+                            name="card_name"
+                            placeholder="John Doe"
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input 
+                                type="text" 
+                                id="expiry" 
+                                name="expiry"
+                                placeholder="MM/YY"
+                                maxlength="5"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input 
+                                type="text" 
+                                id="cvv" 
+                                name="cvv"
+                                placeholder="123"
+                                maxlength="4"
+                                pattern="[0-9]+"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pay" id="payButton">
+                    🔒 Pay {{ booking.total_price }}
+                </button>
+
+                <a href="{% url 'payment_cancel' booking.id %}" class="btn-cancel">
+                    Cancel Payment
+                </a>
+
+                <div class="security-badge">
+                    <p>🔒 Your payment information is secure and encrypted</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+
+            <div class="event-info">
+                {% if booking.event.images.first %}
+                    <img src="{{ booking.event.images.first.image.url }}" alt="{{ booking.event.title }}" class="event-image">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300" alt="{{ booking.event.title }}" class="event-image">
+                {% endif %}
+
+                <div class="event-title">{{ booking.event.title }}</div>
+                <div class="event-detail">📍 {{ booking.event.location }}</div>
+                <div class="event-detail">📅 {{ booking.event_date|date:"F d, Y" }}</div>
+                <div class="event-detail">🎫 {{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</div>
+            </div>
+
+            <div class="summary-row">
+                <span class="summary-label">Ticket Price</span>
+                <span class="summary-value">{{ booking.event.price }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span class="summary-label">Quantity</span>
+                <span class="summary-value">× {{ booking.tickets }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">{{ booking.total_price }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span class="summary-label">Service Fee</span>
+                <span class="summary-value">0.00</span>
+            </div>
+
+            <div class="total-row">
+                <span class="total-label">Total</span>
+                <span class="total-value">{{ booking.total_price }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectPaymentMethod(method) {
+    // Remove selected class from all
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked
+    event.currentTarget.classList.add('selected');
+    
+    // Show/hide card details
+    const cardDetails = document.getElementById('cardDetails');
+    if (method === 'card') {
+        cardDetails.style.display = 'block';
+    } else {
+        cardDetails.style.display = 'none';
+    }
+}
+
+// Format card number
+document.getElementById('card_number')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formatted;
+});
+
+// Format expiry date
+document.getElementById('expiry')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    e.target.value = value;
+});
+
+// Form submission
+document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    const payButton = document.getElementById('payButton');
+    payButton.disabled = true;
+    payButton.textContent = '🔄 Processing Payment...';
+});
+</script>
+{% endblock %}

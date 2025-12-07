@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 480px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 48px 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .auth-header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .auth-header p {
+        color: #717171;
+        font-size: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+        font-size: 14px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #FF385C;
+        box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
+    }
+
+    .form-group input::placeholder {
+        color: #999;
+    }
+
+    .password-field {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: #717171;
+        padding: 0;
+    }
+
+    .remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #222;
+    }
+
+    .remember-me input[type="checkbox"] {
+        width: auto;
+        cursor: pointer;
+    }
+
+    .forgot-password {
+        color: #FF385C;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 32px 0;
+        color: #717171;
+        font-size: 14px;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #ddd;
+    }
+
+    .divider span {
+        padding: 0 16px;
+    }
+
+    .social-login {
+        display: grid;
+        gap: 12px;
+    }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #222;
+    }
+
+    .social-btn:hover {
+        background: #f7f7f7;
+        border-color: #222;
+    }
+
+    .social-icon {
+        font-size: 20px;
+    }
+
+    .signup-link {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #f0f0f0;
+        color: #717171;
+        font-size: 15px;
+    }
+
+    .signup-link a {
+        color: #FF385C;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        color: #856404;
+        font-size: 14px;
+    }
+
+    .success-message {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        color: #155724;
+        font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+        .auth-card {
+            padding: 32px 24px;
+        }
+
+        .auth-container {
+            margin: 40px auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Login to continue to EventSpace</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="error-message">
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                {% else %}
+                    Please correct the errors below.
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username">Username or Email</label>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="id_username"
+                    placeholder="Enter your username or email"
+                    required
+                    autofocus
+                    value="{{ form.username.value|default:'' }}"
+                >
+                {% if form.username.errors %}
+                    <span style="color: #dc3545; font-size: 13px; margin-top: 4px; display: block;">
+                        {{ form.username.errors }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <div class="password-field">
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="id_password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        👁️
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                    <span style="color: #dc3545; font-size: 13px; margin-top: 4px; display: block;">
+                        {{ form.password.errors }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="remember-forgot">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember" id="remember">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Login
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>or continue with</span>
+        </div>
+
+        <div class="social-login">
+            <button class="social-btn" onclick="alert('Google login coming soon!')">
+                <span class="social-icon">🔵</span>
+                Continue with Google
+            </button>
+            <button class="social-btn" onclick="alert('Facebook login coming soon!')">
+                <span class="social-icon">📘</span>
+                Continue with Facebook
+            </button>
+        </div>
+
+        <div class="signup-link">
+            Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('id_password');
+        const toggleBtn = document.querySelector('.toggle-password');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = '👁️';
+        }
+    }
+
+    // Auto-hide messages after 5 seconds
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.error-message, .success-message');
+        messages.forEach(msg => {
+            msg.style.transition = 'opacity 0.5s';
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 500);
+        });
+    }, 5000);
+</script>
+{% endblock %}

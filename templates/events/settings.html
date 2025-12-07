@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .settings-header {
+        margin-bottom: 32px;
+    }
+
+    .settings-header h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .settings-header p {
+        color: #717171;
+    }
+
+    .settings-nav {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 32px;
+        border-bottom: 2px solid #ddd;
+        overflow-x: auto;
+    }
+
+    .settings-tab {
+        padding: 12px 4px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #717171;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .settings-tab:hover {
+        color: #222;
+    }
+
+    .settings-tab.active {
+        color: #FF385C;
+        border-bottom-color: #FF385C;
+    }
+
+    .settings-section {
+        background: white;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        display: none;
+    }
+
+    .settings-section.active {
+        display: block;
+    }
+
+    .settings-section h2 {
+        font-size: 24px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #222;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group input[type="tel"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #FF385C;
+        box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 4px;
+        color: #717171;
+        font-size: 13px;
+    }
+
+    .profile-image-upload {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .current-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .current-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .upload-btn {
+        padding: 10px 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .upload-btn:hover {
+        background: #f7f7f7;
+        border-color: #222;
+    }
+
+    .btn-save {
+        background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+    }
+
+    .danger-zone {
+        border: 2px solid #dc3545;
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 32px;
+    }
+
+    .danger-zone h3 {
+        color: #dc3545;
+        margin-bottom: 12px;
+    }
+
+    .danger-zone p {
+        color: #717171;
+        margin-bottom: 16px;
+    }
+
+    .btn-danger {
+        background: white;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-danger:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    @media (max-width: 640px) {
+        .profile-image-upload {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>Settings</h1>
+            <p>Manage your account settings and preferences</p>
+        </div>
+
+        <div class="settings-nav">
+            <div class="settings-tab active" onclick="showTab('profile')">Profile</div>
+            <div class="settings-tab" onclick="showTab('account')">Account</div>
+            <div class="settings-tab" onclick="showTab('password')">Password</div>
+            <div class="settings-tab" onclick="showTab('preferences')">Preferences</div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Profile Settings -->
+            <div class="settings-section active" id="profile-section">
+                <h2>Profile Information</h2>
+
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <div class="profile-image-upload">
+                        <div class="current-avatar">
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+                            {% else %}
+                                {{ user.username|slice:":1"|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="profile_image" class="upload-btn">Choose New Photo</label>
+                            <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display: none;">
+                            <small>JPG, PNG or GIF. Max size 2MB.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" placeholder="Tell us about yourself">{{ user.bio }}</textarea>
+                    <small>Brief description for your profile. Maximum 500 characters.</small>
+                </div>
+
+                <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="settings-section" id="account-section">
+                <h2>Account Settings</h2>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="{{ user.username }}" disabled>
+                    <small>Username cannot be changed</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" value="{{ user.phone }}" placeholder="+1 (555) 123-4567">
+                </div>
+
+                {% if user.is_host %}
+                <div style="background: #fff3cd; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                    <strong>🎉 Host Account</strong>
+                    <p style="margin-top: 8px; color: #856404; font-size: 14px;">You have host privileges. You can create and manage events.</p>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+
+            <!-- Password Settings -->
+            <div class="settings-section" id="password-section">
+                <h2>Change Password</h2>
+
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password">
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password" minlength="8">
+                    <small>Must be at least 8 characters long</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" minlength="8">
+                </div>
+
+                <button type="submit" class="btn-save">Update Password</button>
+            </div>
+
+            <!-- Preferences -->
+            <div class="settings-section" id="preferences-section">
+                <h2>Preferences</h2>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="email_notifications" checked>
+                        Email Notifications
+                    </label>
+                    <small>Receive emails about your bookings and upcoming events</small>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="event_reminders" checked>
+                        Event Reminders
+                    </label>
+                    <small>Get reminders 24 hours before your booked events</small>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="marketing_emails">
+                        Marketing Emails
+                    </label>
+                    <small>Receive promotional emails and event recommendations</small>
+                </div>
+
+                <button type="submit" class="btn-save">Save Preferences</button>
+
+                <div class="danger-zone">
+                    <h3>Danger Zone</h3>
+                    <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    <a href="{% url 'delete_account' %}" class="btn-danger" style="text-decoration: none; display: inline-block;">
+                        Delete Account
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showTab(tabName) {
+        // Hide all sections
+        document.querySelectorAll('.settings-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(tabName + '-section').classList.add('active');
+        
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+    }
+
+    // Preview profile image before upload
+    document.getElementById('profile_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarImg = document.querySelector('.current-avatar img');
+                if (avatarImg) {
+                    avatarImg.src = e.target.result;
+                } else {
+                    const avatar = document.querySelector('.current-avatar');
+                    avatar.innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Password match validation
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = this.value;
+        
+        if (confirmPassword && newPassword !== confirmPassword) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}

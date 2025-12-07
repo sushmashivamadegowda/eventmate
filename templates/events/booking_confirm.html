@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Booking Confirmation - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .success-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 48px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 32px;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    .success-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .success-banner h1 {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .success-banner p {
+        font-size: 18px;
+        opacity: 0.95;
+    }
+
+    .booking-details {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+
+    .booking-details h2 {
+        font-size: 24px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #717171;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        color: #222;
+        text-align: right;
+    }
+
+    .event-summary {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        display: flex;
+        gap: 24px;
+    }
+
+    .event-image {
+        width: 200px;
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .event-info h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .event-meta {
+        color: #717171;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .total-section {
+        background: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .next-steps {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+
+    .next-steps h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .step {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .step:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background: #FF385C;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .step-content h3 {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .step-content p {
+        color: #717171;
+        font-size: 14px;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 32px;
+    }
+
+    .btn {
+        padding: 14px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: block;
+    }
+
+    .btn-primary {
+        background: #FF385C;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #E31C5F;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #222;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background: #f7f7f7;
+    }
+
+    .info-box {
+        background: #e3f2fd;
+        border-left: 4px solid #2196F3;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 24px;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: #0d47a1;
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .event-summary {
+            flex-direction: column;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .success-banner {
+            padding: 32px 24px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="confirmation-container">
+        <!-- Success Banner -->
+        <div class="success-banner">
+            <div class="success-icon"></div>
+            <h1>Booking Confirmed!</h1>
+            <p>Your tickets have been reserved. Complete payment to finalize your booking.</p>
+        </div>
+
+        <!-- Event Summary -->
+        <div class="event-summary">
+            {% if booking.event.images.first %}
+                <img src="{{ booking.event.images.first.image.url }}" alt="{{ booking.event.title }}" class="event-image">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300" alt="{{ booking.event.title }}" class="event-image">
+            {% endif %}
+
+            <div class="event-info">
+                <h3>{{ booking.event.title }}</h3>
+                <div class="event-meta">📍 {{ booking.event.location }}</div>
+                <div class="event-meta"> {{ booking.event.city.name }}, {{ booking.event.city.state }}</div>
+                <div class="event-meta"> {{ booking.event_date|date:"F d, Y" }}</div>
+                {% if booking.event.start_time %}
+                    <div class="event-meta"> {{ booking.event.start_time|time:"g:i A" }}</div>
+                {% endif %}
+                <span class="status-badge status-{{ booking.status }}">
+                    {{ booking.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+            <h2>Booking Details</h2>
+            
+            <div class="detail-row">
+                <span class="detail-label">Booking ID</span>
+                <span class="detail-value">#{{ booking.id|stringformat:"06d" }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Booking Date</span>
+                <span class="detail-value">{{ booking.booking_date|date:"F d, Y g:i A" }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Number of Tickets</span>
+                <span class="detail-value">{{ booking.tickets }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Price per Ticket</span>
+                <span class="detail-value">{{ booking.event.price }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Event Date</span>
+                <span class="detail-value">{{ booking.event_date|date:"F d, Y" }}</span>
+            </div>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Total Amount</span>
+                    <span>{{ booking.total_price }}</span>
+                </div>
+            </div>
+
+            {% if not booking.is_paid %}
+            <div class="info-box">
+                <p>💳 <strong>Payment Required:</strong> Please complete payment within 24 hours to confirm your booking.</p>
+            </div>
+            {% else %}
+            <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 16px; border-radius: 8px; margin-top: 24px;">
+                <p style="margin: 0; color: #155724; font-weight: 600;">✅ Payment Completed - Booking Confirmed!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Next Steps -->
+        <div class="next-steps">
+            <h2>What's Next?</h2>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Complete Payment</h3>
+                    <p>Click the "Proceed to Payment" button below to secure your tickets. Your booking will be automatically cancelled if payment is not completed within 24 hours.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Confirmation Email</h3>
+                    <p>Once payment is processed, you'll receive a confirmation email with your ticket details and QR code.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Prepare for the Event</h3>
+                    <p>Review the event details, check-in time, and what to bring. We'll send you a reminder email 24 hours before the event.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Enjoy the Experience!</h3>
+                    <p>Show your ticket (digital or printed) at the venue entrance. Have a great time!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            {% if not booking.is_paid %}
+                <a href="#" class="btn btn-primary" onclick="alert('Payment integration coming soon!'); return false;">
+                    Proceed to Payment
+                </a>
+            {% else %}
+                <a href="#" class="btn btn-primary">
+                    Download Ticket
+                </a>
+            {% endif %}
+            <a href="{% url 'my_bookings' %}" class="btn btn-secondary">
+                View All Bookings
+            </a>
+        </div>
+
+        <!-- Additional Information -->
+        <div style="margin-top: 32px; padding: 24px; background: #f7f7f7; border-radius: 12px;">
+            <h3 style="font-size: 18px; margin-bottom: 16px;"> Important Information</h3>
+            
+            <div style="margin-bottom: 12px;">
+                <strong>Cancellation Policy:</strong>
+                <p style="color: #717171; font-size: 14px; margin-top: 4px;">
+                    {{ booking.event.cancellation_policy|default:"Full refund up to 7 days before the event. 50% refund up to 3 days before. No refund within 3 days of the event." }}
+                </p>
+            </div>
+
+            {% if booking.event.age_restriction %}
+            <div style="margin-bottom: 12px;">
+                <strong>Age Restriction:</strong>
+                <p style="color: #717171; font-size: 14px; margin-top: 4px;">
+                    {{ booking.event.age_restriction }}
+                </p>
+            </div>
+            {% endif %}
+
+            <div>
+                <strong>Need Help?</strong>
+                <p style="color: #717171; font-size: 14px; margin-top: 4px;">
+                    Contact us at support@eventspace.com or call 1-800-EVENTS-1 for assistance.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    // Auto-print option
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('print') === 'true') {
+        window.print();
+    }
+</script>
+{% endblock %}

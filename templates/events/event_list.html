@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Events - EventSpace{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Categories */
+    .categories {
+        padding: 20px 80px;
+        display: flex;
+        gap: 40px;
+        overflow-x: auto;
+        border-bottom: 1px solid #ddd;
+        background: white;
+        position: sticky;
+        top: 73px;
+        z-index: 999;
+        scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 10px 0;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .category:hover {
+        border-bottom-color: #ddd;
+    }
+
+    .category.active {
+        border-bottom-color: #222;
+    }
+
+    .category-icon {
+        font-size: 24px;
+    }
+
+    .category-name {
+        font-size: 12px;
+        color: #717171;
+    }
+
+    .category.active .category-name {
+        color: #222;
+    }
+
+    /* Featured Cities Section */
+    .featured-cities {
+        margin-bottom: 60px;
+    }
+
+    .featured-cities h2 {
+        font-size: 28px;
+        margin-bottom: 32px;
+        font-weight: 600;
+    }
+
+    .cities-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+
+    .city-card {
+        position: relative;
+        height: 400px;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .city-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    .city-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .city-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .city-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        padding: 32px 24px;
+        color: white;
+    }
+
+    .city-overlay h3 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .city-overlay p {
+        font-size: 18px;
+        font-weight: 500;
+        opacity: 0.95;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .view-all {
+        color: #FF385C;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .view-all:hover {
+        text-decoration: underline;
+    }
+
+    /* Horizontal Scrolling Container */
+    .events-scroll-container {
+        position: relative;
+        margin-bottom: 60px;
+    }
+
+    .events-horizontal {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 20px;
+        scrollbar-width: thin;
+        scrollbar-color: #FF385C #f0f0f0;
+    }
+
+    .events-horizontal::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .events-horizontal::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 4px;
+    }
+
+    .events-horizontal::-webkit-scrollbar-thumb {
+        background: #FF385C;
+        border-radius: 4px;
+    }
+
+    .events-horizontal::-webkit-scrollbar-thumb:hover {
+        background: #E31C5F;
+    }
+
+    /* Scroll Buttons */
+    .scroll-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border: 1px solid #ddd;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+    }
+
+    .scroll-btn:hover {
+        background: #FF385C;
+        color: white;
+        border-color: #FF385C;
+    }
+
+    .scroll-btn-left {
+        left: -20px;
+    }
+
+    .scroll-btn-right {
+        right: -20px;
+    }
+
+    /* Event Card */
+    .event-card {
+        min-width: 320px;
+        max-width: 320px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .event-image {
+        width: 100%;
+        height: 280px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-bottom: 12px;
+    }
+
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+    }
+
+    .event-location {
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 4px;
+    }
+
+    .event-date {
+        color: #717171;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .event-title {
+        color: #717171;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .event-price {
+        color: #222;
+        font-weight: 600;
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Grid View for "All Events" */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        margin-top: 20px;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 40px;
+        padding: 20px 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #222;
+    }
+
+    .pagination .current {
+        background: #FF385C;
+        color: white;
+        border-color: #FF385C;
+    }
+
+    .pagination a:hover {
+        border-color: #222;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #717171;
+    }
+
+    .no-results h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .cities-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .categories {
+            padding: 20px 24px;
+        }
+        
+        .city-card {
+            height: 300px;
+        }
+
+        .event-card {
+            min-width: 280px;
+            max-width: 280px;
+        }
+
+        .scroll-btn {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Categories -->
+<div class="categories">
+    <a href="?{% if request.GET.location %}location={{ request.GET.location }}&{% endif %}{% if request.GET.date %}date={{ request.GET.date }}{% endif %}" 
+       class="category {% if not request.GET.category or request.GET.category == 'all' %}active{% endif %}">
+        <div class="category-icon">🎪</div>
+        <div class="category-name">All Events</div>
+    </a>
+    {% for value, label in categories %}
+        {% if value != 'all' %}
+        <a href="?category={{ value }}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}" 
+           class="category {% if request.GET.category == value %}active{% endif %}">
+            <div class="category-icon">
+                {% if value == 'music' %}🎵{% elif value == 'sports' %}⚽{% elif value == 'arts' %}🎨
+                {% elif value == 'food' %}🍽️{% elif value == 'business' %}💼{% elif value == 'tech' %}💻
+                {% elif value == 'wellness' %}🧘{% endif %}
+            </div>
+            <div class="category-name">{{ label }}</div>
+        </a>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div class="container">
+    <!-- Featured Cities -->
+    {% if not request.GET.q and not request.GET.category %}
+    <section class="featured-cities">
+        <h2>Explore Events in Popular Cities</h2>
+        <div class="cities-grid">
+            {% for city in featured_cities %}
+            <a href="?city={{ city.slug }}" class="city-card">
+                {% if city.image %}
+                    <img src="{{ city.image.url }}" alt="{{ city.name }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600" alt="{{ city.name }}">
+                {% endif %}
+                <div class="city-overlay">
+                    <h3>{{ city.name }}</h3>
+                    <p>{{ city.event_count }} event{{ city.event_count|pluralize }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Popular Events Section -->
+    {% if not request.GET.q and not request.GET.category and popular_events %}
+    <section class="events-scroll-container">
+        <div class="section-header">
+            <h2>🔥 Popular Events</h2>
+            <a href="?sort=popular" class="view-all">View all →</a>
+        </div>
+        <button class="scroll-btn scroll-btn-left" onclick="scrollEvents('popular', 'left')">←</button>
+        <div class="events-horizontal" id="popular-events">
+            {% for event in popular_events %}
+            <a href="{% url 'event_detail' event.slug %}" class="event-card">
+                {% if event.images.first %}
+                    <img src="{{ event.images.first.image.url }}" alt="{{ event.title }}" class="event-image">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500" alt="{{ event.title }}" class="event-image">
+                {% endif %}
+                <div class="event-header">
+                    <div style="flex: 1;">
+                        <div class="event-location">{{ event.city.name }}, {{ event.city.state }}</div>
+                        <div class="event-date">
+                            {% if event.start_date == event.end_date %}
+                                {{ event.start_date|date:"M d, Y" }}
+                            {% else %}
+                                {{ event.start_date|date:"M d" }} - {{ event.end_date|date:"d, Y" }}
+                            {% endif %}
+                        </div>
+                        <div class="event-title">{{ event.title|truncatewords:5 }}</div>
+                        <div class="event-price">${{ event.price }} per ticket</div>
+                    </div>
+                    {% if event.average_rating > 0 %}
+                    <div class="rating">⭐ {{ event.average_rating|floatformat:1 }}</div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <button class="scroll-btn scroll-btn-right" onclick="scrollEvents('popular', 'right')">→</button>
+    </section>
+    {% endif %}
+
+    <!-- Events by City Sections -->
+    {% if not request.GET.q and not request.GET.category and events_by_city %}
+        {% for city_data in events_by_city %}
+        <section class="events-scroll-container">
+            <div class="section-header">
+                <h2>📍 Events in {{ city_data.city.name }}</h2>
+                <a href="?city={{ city_data.city.slug }}" class="view-all">View all →</a>
+            </div>
+            <button class="scroll-btn scroll-btn-left" onclick="scrollEvents('city-{{ city_data.city.slug }}', 'left')">←</button>
+            <div class="events-horizontal" id="city-{{ city_data.city.slug }}-events">
+                {% for event in city_data.events %}
+                <a href="{% url 'event_detail' event.slug %}" class="event-card">
+                    {% if event.images.first %}
+                        <img src="{{ event.images.first.image.url }}" alt="{{ event.title }}" class="event-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500" alt="{{ event.title }}" class="event-image">
+                    {% endif %}
+                    <div class="event-header">
+                        <div style="flex: 1;">
+                            <div class="event-location">{{ event.city.name }}, {{ event.city.state }}</div>
+                            <div class="event-date">
+                                {% if event.start_date == event.end_date %}
+                                    {{ event.start_date|date:"M d, Y" }}
+                                {% else %}
+                                    {{ event.start_date|date:"M d" }} - {{ event.end_date|date:"d, Y" }}
+                                {% endif %}
+                            </div>
+                            <div class="event-title">{{ event.title|truncatewords:5 }}</div>
+                            <div class="event-price">${{ event.price }} per ticket</div>
+                        </div>
+                        {% if event.average_rating > 0 %}
+                        <div class="rating">⭐ {{ event.average_rating|floatformat:1 }}</div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <button class="scroll-btn scroll-btn-right" onclick="scrollEvents('city-{{ city_data.city.slug }}', 'right')">→</button>
+        </section>
+        {% endfor %}
+    {% endif %}
+
+    <!-- All Events Grid (when searching or filtering) -->
+    {% if request.GET.q or request.GET.category or request.GET.city or request.GET.location %}
+    <div class="section-header">
+        <h2>
+            {% if active_filters.q %}
+                Search results for "{{ active_filters.q }}"
+            {% elif active_filters.city %}
+                Events in {{ active_filters.city }}
+            {% elif active_filters.category %}
+                {{ active_filters.category|title }} Events
+            {% elif active_filters.location %}
+                Events in {{ active_filters.location }}
+            {% else %}
+                All Events
+            {% endif %}
+        </h2>
+    </div>
+
+    {% if events %}
+    <div class="events-grid">
+        {% for event in events %}
+        <a href="{% url 'event_detail' event.slug %}" class="event-card" style="max-width: 100%;">
+            {% if event.images.first %}
+                <img src="{{ event.images.first.image.url }}" alt="{{ event.title }}" class="event-image">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500" alt="{{ event.title }}" class="event-image">
+            {% endif %}
+            <div class="event-header">
+                <div>
+                    <div class="event-location">{{ event.city.name }}, {{ event.city.state }}</div>
+                    <div class="event-date">
+                        {% if event.start_date == event.end_date %}
+                            {{ event.start_date|date:"M d, Y" }}
+                        {% else %}
+                            {{ event.start_date|date:"M d" }} - {{ event.end_date|date:"d, Y" }}
+                        {% endif %}
+                    </div>
+                    <div class="event-title">{{ event.title }}</div>
+                    <div class="event-price">${{ event.price }} per ticket</div>
+                </div>
+                {% if event.average_rating > 0 %}
+                <div class="rating">⭐ {{ event.average_rating|floatformat:1 }}</div>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="no-results">
+        <h3>No events found</h3>
+        <p>Try adjusting your search or filters</p>
+        <a href="{% url 'event_list' %}" style="color: #FF385C; text-decoration: none; margin-top: 20px; display: inline-block;">Clear all filters</a>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script>
+function scrollEvents(sectionId, direction) {
+    const container = document.getElementById(sectionId + '-events');
+    const scrollAmount = 340; // Card width + gap
+    
+    if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+}
+</script>
+{% endblock %}

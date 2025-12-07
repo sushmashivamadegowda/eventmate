@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EventSpace - Book Amazing Events{% endblock %}</title>
+    {% load static %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF385C;
+            text-decoration: none;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 10px 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s;
+        }
+
+        .search-bar:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            padding: 0 15px;
+            font-size: 14px;
+            border-left: 1px solid #ddd;
+            min-width: 150px;
+        }
+
+        .search-bar input:first-child {
+            border-left: none;
+        }
+
+        .search-btn {
+            background: #FF385C;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover {
+            color: #FF385C;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ddd;
+            border-radius: 21px;
+            padding: 5px 5px 5px 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+            min-width: 240px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: #222;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f7f7f7;
+        }
+
+        .container {
+            padding: 40px 80px;
+            min-height: calc(100vh - 400px);
+        }
+
+        /* Messages */
+        .messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* Footer */
+        footer {
+            background: #f7f7f7;
+            padding: 48px 80px;
+            margin-top: 80px;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .footer-section h3 {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: #717171;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-bottom {
+            padding-top: 24px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #717171;
+        }
+
+        @media (max-width: 768px) {
+            header, .container, footer {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .search-bar input {
+                min-width: 100px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="{% url 'event_list' %}" class="logo"> EventSpace</a>
+        
+        <form method="GET" action="{% url 'event_list' %}" class="search-bar">
+            <input type="text" name="location" placeholder="Location" value="{{ request.GET.location }}">
+            <input type="date" name="date" placeholder="Date" value="{{ request.GET.date }}">
+            <input type="text" name="type" placeholder="Event Type" value="{{ request.GET.type }}">
+            <button type="submit" class="search-btn">🔍</button>
+        </form>
+
+        <div class="nav-menu">
+            {% if user.is_authenticated and user.is_host %}
+                <a href="{% url 'create_event' %}">Host an Event</a>
+            {% endif %}
+            
+            <div class="user-menu" onclick="toggleDropdown()">
+                <span>☰</span>
+                <span>👤</span>
+                <div class="dropdown-menu" id="userDropdown">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}">Profile</a>
+                        <a href="{% url 'my_bookings' %}">My Bookings</a>
+                        {% if user.is_host %}
+                            <a href="{% url 'my_events' %}">My Events</a>
+                        {% endif %}
+                        <a href="{% url 'settings' %}">Settings</a>
+                        <a href="#" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a>
+                        <a href="{% url 'signup' %}">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Safety Information</a></li>
+                    <li><a href="#">Cancellation Options</a></li>
+                    <li><a href="#">COVID-19 Response</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">EventSpace Blog</a></li>
+                    <li><a href="#">Community Forum</a></li>
+                    <li><a href="#">Host Resources</a></li>
+                    <li><a href="#">Event Planning Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#">Company</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Terms & Privacy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2025 EventSpace, Inc. All rights reserved.</div>
+            <div>🌐 English (US) • $ USD</div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!userMenu.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelector('.messages');
+            if (messages) {
+                messages.style.display = 'none';
+            }
+        }, 5000);
+    </script>
+    
+    <!-- Hidden logout form -->
+    {% if user.is_authenticated %}
+    <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+    </form>
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
