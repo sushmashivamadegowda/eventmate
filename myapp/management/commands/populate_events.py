@@ -33,6 +33,10 @@ class Command(BaseCommand):
             {'name': 'Los Angeles', 'state': 'CA', 'country': 'USA'},
             {'name': 'Chicago', 'state': 'IL', 'country': 'USA'},
             {'name': 'Miami', 'state': 'FL', 'country': 'USA'},
+            {'name': 'Mumbai', 'state': 'Maharashtra', 'country': 'India'},
+            {'name': 'Delhi', 'state': 'Delhi', 'country': 'India'},
+            {'name': 'Bangalore', 'state': 'Karnataka', 'country': 'India'},
+            {'name': 'Chennai', 'state': 'Tamil Nadu', 'country': 'India'},
         ]
         
         cities = []
@@ -153,6 +157,212 @@ class Command(BaseCommand):
                 'cancellation_policy': 'No refunds, event proceeds rain or shine.',
                 'age_restriction': '18+ only',
                 'is_featured': True
+            },
+            
+            # Technology Events in India
+            {
+                'title': 'Python Developer Summit Mumbai 2025',
+                'category': 'tech',
+                'description': 'Join India\'s largest Python conference featuring workshops, talks, and networking with Python experts. Learn about Django, Flask, Data Science, ML, and more.',
+                'location': 'NSCI Dome, Worli',
+                'city_index': 4,  # Mumbai
+                'start_date': date.today() + timedelta(days=40),
+                'end_date': date.today() + timedelta(days=42),
+                'start_time': '09:00',
+                'price': Decimal('2500.00'),
+                'capacity': 1500,
+                'included': 'Conference pass, Workshop access, Lunch & snacks, Swag bag, Certificate',
+                'things_to_know': 'Bring your laptop for hands-on workshops. Wi-Fi provided.',
+                'cancellation_policy': 'Full refund up to 7 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': True
+            },
+            {
+                'title': 'JavaScript & React Bootcamp Delhi',
+                'category': 'tech',
+                'description': 'Intensive 3-day bootcamp covering modern JavaScript, React, Node.js, and full-stack development. Perfect for beginners and intermediate developers.',
+                'location': 'India Habitat Centre, Lodhi Road',
+                'city_index': 5,  # Delhi
+                'start_date': date.today() + timedelta(days=50),
+                'end_date': date.today() + timedelta(days=52),
+                'start_time': '10:00',
+                'price': Decimal('3000.00'),
+                'capacity': 800,
+                'included': 'Training materials, Project assignments, Certificate, Networking dinner',
+                'things_to_know': 'Basic programming knowledge required. Laptop mandatory.',
+                'cancellation_policy': '50% refund up to 5 days before event.',
+                'age_restriction': '16+ recommended',
+                'is_featured': True
+            },
+            {
+                'title': 'GitHub Universe India - Bangalore',
+                'category': 'tech',
+                'description': 'GitHub\'s official event in India! Learn about Git workflows, GitHub Actions, Copilot, open source collaboration, and DevOps best practices.',
+                'location': 'Bangalore International Exhibition Centre',
+                'city_index': 6,  # Bangalore
+                'start_date': date.today() + timedelta(days=65),
+                'end_date': date.today() + timedelta(days=66),
+                'start_time': '09:30',
+                'price': Decimal('1500.00'),
+                'capacity': 2000,
+                'included': 'Conference pass, GitHub swag, Meals, Workshops, Networking sessions',
+                'things_to_know': 'GitHub account recommended. Hands-on sessions available.',
+                'cancellation_policy': 'Full refund up to 10 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': True
+            },
+            {
+                'title': 'Python for Data Science Chennai',
+                'category': 'tech',
+                'description': 'Master Python for data analysis, visualization, and machine learning. Hands-on workshop with real-world datasets using pandas, NumPy, and scikit-learn.',
+                'location': 'IIT Madras Research Park',
+                'city_index': 7,  # Chennai
+                'start_date': date.today() + timedelta(days=55),
+                'end_date': date.today() + timedelta(days=56),
+                'start_time': '09:00',
+                'price': Decimal('2000.00'),
+                'capacity': 500,
+                'included': 'Workshop materials, Dataset access, Certificate, Refreshments',
+                'things_to_know': 'Python basics required. Bring laptop with Python installed.',
+                'cancellation_policy': 'Full refund up to 14 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': False
+            },
+            {
+                'title': 'Full Stack JavaScript Hackathon Mumbai',
+                'category': 'tech',
+                'description': '48-hour coding marathon! Build innovative web applications using MERN stack. Amazing prizes, mentorship from industry experts, and networking opportunities.',
+                'location': 'WeWork BKC, Bandra Kurla Complex',
+                'city_index': 4,  # Mumbai
+                'start_date': date.today() + timedelta(days=75),
+                'end_date': date.today() + timedelta(days=77),
+                'start_time': '08:00',
+                'price': Decimal('500.00'),
+                'capacity': 300,
+                'included': 'Meals throughout, Energy drinks, Mentorship, Prizes worth ₹5 lakhs',
+                'things_to_know': '48-hour event. Can form teams up to 4 members. Sleeping area provided.',
+                'cancellation_policy': 'No refund after registration confirmation.',
+                'age_restriction': '18+ only',
+                'is_featured': True
+            },
+            {
+                'title': 'Advanced Python & Django Workshop Delhi',
+                'category': 'tech',
+                'description': 'Deep dive into advanced Python concepts and Django framework. Build scalable web applications, REST APIs, and learn deployment strategies.',
+                'location': 'Aerocity Convention Centre',
+                'city_index': 5,  # Delhi
+                'start_date': date.today() + timedelta(days=80),
+                'end_date': date.today() + timedelta(days=81),
+                'start_time': '10:00',
+                'price': Decimal('2800.00'),
+                'capacity': 600,
+                'included': 'Workshop access, Code repository, Certificate, Lunch',
+                'things_to_know': 'Intermediate Python knowledge required. Django basics helpful.',
+                'cancellation_policy': 'Full refund up to 7 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': False
+            },
+            {
+                'title': 'GitHub Open Source Summit Bangalore',
+                'category': 'tech',
+                'description': 'Celebrate open source! Connect with maintainers, contribute to projects, learn best practices for collaboration, and discover career opportunities in OSS.',
+                'location': 'Sheraton Grand Bangalore Hotel',
+                'city_index': 6,  # Bangalore
+                'start_date': date.today() + timedelta(days=85),
+                'end_date': date.today() + timedelta(days=85),
+                'start_time': '09:00',
+                'price': Decimal('1000.00'),
+                'capacity': 1200,
+                'included': 'Summit pass, GitHub premium trial, Swag, Lunch & snacks',
+                'things_to_know': 'Bring ideas for collaboration. Networking sessions included.',
+                'cancellation_policy': 'Full refund up to 5 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': True
+            },
+            {
+                'title': 'React & JavaScript Masterclass Chennai',
+                'category': 'tech',
+                'description': 'Comprehensive React training covering hooks, state management, Redux, testing, and modern JavaScript ES6+. Build production-ready applications.',
+                'location': 'Chennai Trade Centre, Nandambakkam',
+                'city_index': 7,  # Chennai
+                'start_date': date.today() + timedelta(days=70),
+                'end_date': date.today() + timedelta(days=72),
+                'start_time': '09:30',
+                'price': Decimal('3500.00'),
+                'capacity': 400,
+                'included': 'Training kit, Project source code, Certificate, Tea & snacks',
+                'things_to_know': 'JavaScript fundamentals required. React basics helpful but not mandatory.',
+                'cancellation_policy': '50% refund up to 10 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': False
+            },
+            {
+                'title': 'Python AI/ML Conference Mumbai',
+                'category': 'tech',
+                'description': 'Explore cutting-edge AI and Machine Learning with Python. Sessions on TensorFlow, PyTorch, NLP, Computer Vision, and real-world AI applications.',
+                'location': 'Jio World Convention Centre, BKC',
+                'city_index': 4,  # Mumbai
+                'start_date': date.today() + timedelta(days=95),
+                'end_date': date.today() + timedelta(days=97),
+                'start_time': '09:00',
+                'price': Decimal('4000.00'),
+                'capacity': 1800,
+                'included': 'Conference pass, Workshop sessions, Research papers, Meals, Certificate',
+                'things_to_know': 'Python and basic ML knowledge recommended. GPU access provided for workshops.',
+                'cancellation_policy': 'Full refund up to 14 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': True
+            },
+            {
+                'title': 'JavaScript Framework Battle Delhi',
+                'category': 'tech',
+                'description': 'Compare and learn React, Vue, and Angular in one event! Build the same app in all three frameworks and decide which suits your needs best.',
+                'location': 'Pragati Maidan Convention Centre',
+                'city_index': 5,  # Delhi
+                'start_date': date.today() + timedelta(days=88),
+                'end_date': date.today() + timedelta(days=89),
+                'start_time': '10:00',
+                'price': Decimal('2200.00'),
+                'capacity': 700,
+                'included': 'Workshop materials, Code samples, Certificate, Refreshments',
+                'things_to_know': 'Solid JavaScript knowledge required. Familiarity with any framework helpful.',
+                'cancellation_policy': 'Full refund up to 7 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': False
+            },
+            {
+                'title': 'GitHub Actions & DevOps Bangalore',
+                'category': 'tech',
+                'description': 'Master CI/CD with GitHub Actions! Learn automation, testing pipelines, deployment strategies, and DevOps best practices for modern development.',
+                'location': 'The Leela Palace, Old Airport Road',
+                'city_index': 6,  # Bangalore
+                'start_date': date.today() + timedelta(days=92),
+                'end_date': date.today() + timedelta(days=93),
+                'start_time': '09:00',
+                'price': Decimal('2600.00'),
+                'capacity': 900,
+                'included': 'Training materials, GitHub Enterprise trial, Certificate, Meals',
+                'things_to_know': 'Basic Git knowledge required. DevOps concepts helpful.',
+                'cancellation_policy': 'Full refund up to 10 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': True
+            },
+            {
+                'title': 'Python Web Scraping & Automation Chennai',
+                'category': 'tech',
+                'description': 'Learn web scraping with BeautifulSoup, Selenium, and Scrapy. Automate repetitive tasks and extract data from websites efficiently and ethically.',
+                'location': 'Anna Centenary Library, Kotturpuram',
+                'city_index': 7,  # Chennai
+                'start_date': date.today() + timedelta(days=100),
+                'end_date': date.today() + timedelta(days=100),
+                'start_time': '10:00',
+                'price': Decimal('1800.00'),
+                'capacity': 350,
+                'included': 'Workshop kit, Code samples, Practice datasets, Certificate',
+                'things_to_know': 'Python basics required. Bring laptop with Python installed.',
+                'cancellation_policy': 'Full refund up to 5 days before event.',
+                'age_restriction': 'All ages welcome',
+                'is_featured': False
             }
         ]
 

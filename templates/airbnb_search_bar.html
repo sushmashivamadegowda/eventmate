@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airbnb-Style Animated Search Bar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF385C',
+                        secondary: '#E61E4D',
+                    },
+                    boxShadow: {
+                        'search': '0 8px 28px rgba(0, 0, 0, 0.12)',
+                        'search-hover': '0 12px 36px rgba(0, 0, 0, 0.15)',
+                        'field-active': '0 6px 20px rgba(0, 0, 0, 0.15)',
+                        'dropdown': '0 16px 40px rgba(0, 0, 0, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-sans min-h-screen flex items-center justify-center p-5 bg-gradient-to-br from-[#667eea] to-[#764ba2]">
+    <div class="w-full max-w-6xl">
+        <div class="text-center text-white mb-16">
+            <h1 class="text-5xl font-bold mb-3 drop-shadow-md">🏠 Airbnb-Style Search Bar</h1>
+            <p class="text-lg opacity-90">Complete with animations, calendar, and guest selector</p>
+        </div>
+
+        <div class="flex justify-center">
+            <!-- Main Search Bar Container -->
+            <div
+                class="bg-white rounded-full shadow-search hover:shadow-search-hover inline-flex items-center relative transition-all duration-400 border border-gray-200 max-w-[850px] w-full mx-auto p-2.5 group search-bar-container">
+
+                <!-- Location Field -->
+                <div class="flex-1 px-8 py-3.5 cursor-pointer relative rounded-full transition-all duration-200 hover:bg-gray-100 [&.active]:bg-white [&.active]:shadow-field-active [&.active]:z-10 search-field"
+                    id="locationField" onclick="activateField('location')">
+                    <label class="block text-xs font-extrabold text-gray-800 mb-0.5 tracking-wide">Where</label>
+                    <input type="text" placeholder="Search destinations" id="locationInput"
+                        class="w-full border-none outline-none bg-transparent text-sm text-gray-800 font-normal placeholder-gray-500 cursor-pointer">
+                </div>
+
+                <div class="w-px h-8 bg-gray-200 transition-opacity duration-200 divider"></div>
+
+                <!-- Dates Field -->
+                <div class="flex-1 px-8 py-3.5 cursor-pointer relative rounded-full transition-all duration-200 hover:bg-gray-100 [&.active]:bg-white [&.active]:shadow-field-active [&.active]:z-10 search-field"
+                    id="datesField" onclick="activateField('dates')">
+                    <label class="block text-xs font-extrabold text-gray-800 mb-0.5 tracking-wide">Check in / Check
+                        out</label>
+                    <input type="text" readonly placeholder="Add dates" id="datesDisplay"
+                        class="w-full border-none outline-none bg-transparent text-sm text-gray-800 font-normal placeholder-gray-500 cursor-pointer">
+                </div>
+
+                <div class="w-px h-8 bg-gray-200 transition-opacity duration-200 divider"></div>
+
+                <!-- Guests Field -->
+                <div class="flex-1 px-8 py-3.5 cursor-pointer relative rounded-full transition-all duration-200 hover:bg-gray-100 [&.active]:bg-white [&.active]:shadow-field-active [&.active]:z-10 search-field"
+                    id="guestsField" onclick="activateField('guests')">
+                    <label class="block text-xs font-extrabold text-gray-800 mb-0.5 tracking-wide">Who</label>
+                    <div class="text-sm text-gray-500 font-normal w-full truncate guest-display empty"
+                        id="guestDisplay">Add guests</div>
+                </div>
+
+                <!-- Search Button -->
+                <button
+                    class="bg-gradient-to-r from-[#FF385C] to-[#E61E4D] text-white border-none rounded-full w-12 h-12 flex items-center justify-center cursor-pointer transition-all duration-200 shrink-0 ml-2 hover:scale-110 hover:shadow-lg active:scale-95 search-button"
+                    onclick="handleSearch()">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+
+                <!-- Calendar Dropdown -->
+                <div class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 -translate-y-2.5 bg-white rounded-3xl shadow-dropdown p-8 z-50 w-[660px] opacity-0 invisible transition-all duration-300 [&.active]:opacity-100 [&.active]:visible [&.active]:translate-y-0 calendar-dropdown"
+                    id="calendarDropdown">
+                    <div class="flex justify-between items-center mb-6">
+                        <button
+                            class="p-2 rounded-full hover:bg-gray-100 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed transition-all calendar-nav"
+                            onclick="previousMonth()" id="prevBtn">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="text-lg font-bold text-gray-800">Select dates</div>
+                        <button class="p-2 rounded-full hover:bg-gray-100 hover:scale-110 transition-all calendar-nav"
+                            onclick="nextMonth()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-10" id="calendarMonths"></div>
+                </div>
+
+                <!-- Guest Dropdown -->
+                <div class="absolute top-[calc(100%+12px)] right-0 bg-white rounded-3xl shadow-dropdown p-8 z-50 w-[400px] opacity-0 invisible -translate-y-2.5 transition-all duration-300 [&.active]:opacity-100 [&.active]:visible [&.active]:translate-y-0 guest-dropdown"
+                    id="guestDropdown">
+                    <div
+                        class="flex justify-between items-center py-5 border-b border-gray-100 last:border-0 guest-row">
+                        <div class="guest-info">
+                            <h4 class="text-base font-semibold text-gray-800 mb-1">Adults</h4>
+                            <p class="text-sm text-gray-500">Ages 13 or above</p>
+                        </div>
+                        <div class="flex items-center gap-4 guest-controls">
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-all guest-button"
+                                onclick="updateGuests('adults', -1)" id="adultsMinusBtn">−</button>
+                            <span class="text-base font-semibold text-gray-800 w-6 text-center guest-count"
+                                id="adultsCount">0</span>
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black transition-all guest-button"
+                                onclick="updateGuests('adults', 1)">+</button>
+                        </div>
+                    </div>
+                    <div
+                        class="flex justify-between items-center py-5 border-b border-gray-100 last:border-0 guest-row">
+                        <div class="guest-info">
+                            <h4 class="text-base font-semibold text-gray-800 mb-1">Children</h4>
+                            <p class="text-sm text-gray-500">Ages 2-12</p>
+                        </div>
+                        <div class="flex items-center gap-4 guest-controls">
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-all guest-button"
+                                onclick="updateGuests('children', -1)" id="childrenMinusBtn">−</button>
+                            <span class="text-base font-semibold text-gray-800 w-6 text-center guest-count"
+                                id="childrenCount">0</span>
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black transition-all guest-button"
+                                onclick="updateGuests('children', 1)">+</button>
+                        </div>
+                    </div>
+                    <div
+                        class="flex justify-between items-center py-5 border-b border-gray-100 last:border-0 guest-row">
+                        <div class="guest-info">
+                            <h4 class="text-base font-semibold text-gray-800 mb-1">Infants</h4>
+                            <p class="text-sm text-gray-500">Under 2</p>
+                        </div>
+                        <div class="flex items-center gap-4 guest-controls">
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-all guest-button"
+                                onclick="updateGuests('infants', -1)" id="infantsMinusBtn">−</button>
+                            <span class="text-base font-semibold text-gray-800 w-6 text-center guest-count"
+                                id="infantsCount">0</span>
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black transition-all guest-button"
+                                onclick="updateGuests('infants', 1)">+</button>
+                        </div>
+                    </div>
+                    <div
+                        class="flex justify-between items-center py-5 border-b border-gray-100 last:border-0 guest-row">
+                        <div class="guest-info">
+                            <h4 class="text-base font-semibold text-gray-800 mb-1">Pets</h4>
+                            <p class="text-sm text-gray-500">Service animals welcome</p>
+                        </div>
+                        <div class="flex items-center gap-4 guest-controls">
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-all guest-button"
+                                onclick="updateGuests('pets', -1)" id="petsMinusBtn">−</button>
+                            <span class="text-base font-semibold text-gray-800 w-6 text-center guest-count"
+                                id="petsCount">0</span>
+                            <button
+                                class="w-9 h-9 border border-gray-300 rounded-full bg-white flex items-center justify-center text-lg text-gray-500 hover:border-black hover:text-black transition-all guest-button"
+                                onclick="updateGuests('pets', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40 opacity-0 invisible transition-all duration-300 [&.active]:opacity-100 [&.active]:visible overlay"
+        id="overlay" onclick="closeAllDropdowns()"></div>
+
+    <script>
+        // State management
+        let currentField = null;
+        let currentMonth = new Date();
+        let selectedStartDate = null;
+        let selectedEndDate = null;
+        let guests = {
+            adults: 0,
+            children: 0,
+            infants: 0,
+            pets: 0
+        };
+
+        // Activate field
+        function activateField(field) {
+            // Remove active from all fields
+            document.querySelectorAll('.search-field').forEach(f => f.classList.remove('active'));
+            // Hide dividers when a field is active (optional, but mimics Airbnb)
+            document.querySelectorAll('.divider').forEach(d => d.style.opacity = '1');
+
+            // Close all dropdowns
+            document.getElementById('calendarDropdown').classList.remove('active');
+            document.getElementById('guestDropdown').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+
+            // Activate current field
+            const fieldElement = document.getElementById(field + 'Field');
+            fieldElement.classList.add('active');
+
+            // Hide adjacent dividers
+            const prevDivider = fieldElement.previousElementSibling;
+            if (prevDivider && prevDivider.classList.contains('divider')) prevDivider.style.opacity = '0';
+            const nextDivider = fieldElement.nextElementSibling;
+            if (nextDivider && nextDivider.classList.contains('divider')) nextDivider.style.opacity = '0';
+
+            currentField = field;
+
+            // Show appropriate dropdown
+            if (field === 'dates') {
+                document.getElementById('calendarDropdown').classList.add('active');
+                document.getElementById('overlay').classList.add('active');
+                initCalendar();
+            } else if (field === 'guests') {
+                document.getElementById('guestDropdown').classList.add('active');
+                document.getElementById('overlay').classList.add('active');
+            } else if (field === 'location') {
+                document.getElementById('locationInput').focus();
+            }
+        }
+
+        // Close all dropdowns
+        function closeAllDropdowns() {
+            document.querySelectorAll('.search-field').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.divider').forEach(d => d.style.opacity = '1');
+            document.getElementById('calendarDropdown').classList.remove('active');
+            document.getElementById('guestDropdown').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            currentField = null;
+        }
+
+        // Calendar functions
+        function initCalendar() {
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendarMonths');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 2; i++) {
+                const monthDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + i, 1);
+                container.appendChild(createMonthGrid(monthDate));
+            }
+
+            // Disable prev button if current month
+            const today = new Date();
+            const isPastMonth = currentMonth.getFullYear() < today.getFullYear() ||
+                (currentMonth.getFullYear() === today.getFullYear() &&
+                    currentMonth.getMonth() <= today.getMonth());
+            document.getElementById('prevBtn').disabled = isPastMonth;
+        }
+
+        function createMonthGrid(date) {
+            const monthDiv = document.createElement('div');
+            monthDiv.className = 'flex flex-col';
+
+            const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+            const monthHeader = document.createElement('div');
+            monthHeader.className = 'text-base font-bold text-center mb-4 text-gray-800';
+            monthHeader.textContent = monthName;
+            monthDiv.appendChild(monthHeader);
+
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-7 gap-1';
+
+            // Day headers
+            ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'text-[11px] font-semibold text-gray-500 text-center py-2';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            // Get first day of month and number of days
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'aspect-square';
+                grid.appendChild(emptyDay);
+            }
+
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDate = new Date(date.getFullYear(), date.getMonth(), day);
+                const dayElement = document.createElement('div');
+                // Base classes for calendar day
+                dayElement.className = 'aspect-square flex items-center justify-center text-sm rounded-full cursor-pointer transition-all relative text-gray-800 hover:bg-gray-100 hover:scale-110';
+                dayElement.textContent = day;
+
+                // Check if past date
+                if (dayDate < today) {
+                    dayElement.className = 'aspect-square flex items-center justify-center text-sm rounded-full cursor-not-allowed text-gray-300 line-through';
+                } else {
+                    dayElement.onclick = () => selectDate(dayDate);
+
+                    // Check if selected
+                    if (selectedStartDate && dayDate.getTime() === selectedStartDate.getTime()) {
+                        dayElement.className = 'aspect-square flex items-center justify-center text-sm rounded-full cursor-pointer transition-all relative text-white bg-black font-bold z-10';
+                        // Add gradient/bg logic for range start? Tailwind doesn't do complex gradients like that easily on same element without pseudo
+                    }
+                    if (selectedEndDate && dayDate.getTime() === selectedEndDate.getTime()) {
+                        dayElement.className = 'aspect-square flex items-center justify-center text-sm rounded-full cursor-pointer transition-all relative text-white bg-black font-bold z-10';
+                    }
+
+                    // Check if in range
+                    if (selectedStartDate && selectedEndDate &&
+                        dayDate > selectedStartDate && dayDate < selectedEndDate) {
+                        dayElement.className = 'aspect-square flex items-center justify-center text-sm rounded-none bg-gray-100 text-gray-800';
+                    }
+                }
+
+                grid.appendChild(dayElement);
+            }
+
+            monthDiv.appendChild(grid);
+            return monthDiv;
+        }
+
+        function selectDate(date) {
+            if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+                // Start new selection
+                selectedStartDate = date;
+                selectedEndDate = null;
+                updateDateDisplay();
+            } else if (date > selectedStartDate) {
+                // Select end date
+                selectedEndDate = date;
+                updateDateDisplay();
+                // Auto-close after range selection
+                setTimeout(closeAllDropdowns, 500);
+            } else {
+                // Reset if selected date is before start
+                selectedStartDate = date;
+                selectedEndDate = null;
+                updateDateDisplay();
+            }
+            renderCalendar();
+        }
+
+        function updateDateDisplay() {
+            const options = { month: 'short', day: 'numeric' };
+            let displayText = 'Add dates';
+
+            if (selectedStartDate && selectedEndDate) {
+                displayText = selectedStartDate.toLocaleDateString('en-US', options) +
+                    ' - ' + selectedEndDate.toLocaleDateString('en-US', options);
+            } else if (selectedStartDate) {
+                displayText = selectedStartDate.toLocaleDateString('en-US', options);
+            }
+
+            document.getElementById('datesDisplay').value = displayText;
+        }
+
+        function previousMonth() {
+            currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+            renderCalendar();
+        }
+
+        // Guest functions
+        function updateGuests(type, delta) {
+            guests[type] = Math.max(0, guests[type] + delta);
+            document.getElementById(type + 'Count').textContent = guests[type];
+
+            // Update minus button state
+            document.getElementById(type + 'MinusBtn').disabled = guests[type] === 0;
+
+            // Update guest display
+            updateGuestDisplay();
+        }
+
+        function updateGuestDisplay() {
+            const total = guests.adults + guests.children;
+            const parts = [];
+
+            if (total > 0) {
+                parts.push(`${total} guest${total !== 1 ? 's' : ''}`);
+            }
+            if (guests.infants > 0) {
+                parts.push(`${guests.infants} infant${guests.infants !== 1 ? 's' : ''}`);
+            }
+            if (guests.pets > 0) {
+                parts.push(`${guests.pets} pet${guests.pets !== 1 ? 's' : ''}`);
+            }
+
+            const displayElement = document.getElementById('guestDisplay');
+            displayElement.textContent = parts.length > 0 ? parts.join(', ') : 'Add guests';
+
+            if (parts.length > 0) {
+                displayElement.classList.remove('text-gray-500');
+                displayElement.classList.add('text-gray-900', 'font-semibold');
+            } else {
+                displayElement.classList.add('text-gray-500');
+                displayElement.classList.remove('text-gray-900', 'font-semibold');
+            }
+        }
+
+        // Initialize minus buttons as disabled
+        document.addEventListener('DOMContentLoaded', () => {
+            ['adults', 'children', 'infants', 'pets'].forEach(type => {
+                document.getElementById(type + 'MinusBtn').disabled = true;
+            });
+        });
+
+        // Search function
+        function handleSearch() {
+            const location = document.getElementById('locationInput').value;
+            const dates = document.getElementById('datesDisplay').value;
+
+            console.log('Search:', {
+                location,
+                dates,
+                selectedStartDate,
+                selectedEndDate,
+                guests
+            });
+
+            const guestTotal = guests.adults + guests.children;
+            alert(`🔍 Searching for:\n\n📍 Location: ${location || 'Anywhere'}\n📅 Dates: ${dates}\n👥 Guests: ${guestTotal} guest(s)${guests.infants > 0 ? `, ${guests.infants} infant(s)` : ''}${guests.pets > 0 ? `, ${guests.pets} pet(s)` : ''}`);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar-container')) {
+                closeAllDropdowns();
+            }
+        });
+    </script>
+</body>
+
+</html>

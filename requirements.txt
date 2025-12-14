@@ -1,0 +1,36 @@
+# Core Django
+Django==5.2.5
+
+# Database
+psycopg2-binary==2.9.9
+
+# Redis & Caching
+django-redis==5.4.0
+redis==5.0.1
+
+# Web Server
+gunicorn==21.2.0
+
+# Static Files
+whitenoise==6.6.0
+
+# Image Processing
+Pillow==10.1.0
+cloudinary==1.36.0
+django-cloudinary-storage==0.3.0
+
+# Performance & Monitoring
+django-debug-toolbar==4.2.0  # Only for staging
+django-extensions==3.2.3
+
+# Rate Limiting
+django-ratelimit==4.1.0
+
+# Environment Variables
+python-decouple==3.8
+
+# Production Server
+gevent==23.9.1
+
+# Load Testing
+locust==2.18.3

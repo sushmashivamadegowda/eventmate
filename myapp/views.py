@@ -115,6 +115,11 @@ class EventListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # All cities for dropdown
+        context['cities'] = City.objects.filter(
+            events__is_active=True
+        ).distinct().order_by('name')
+        
         # Featured cities with event counts
         context['featured_cities'] = City.objects.filter(
             is_featured=True
@@ -559,6 +564,99 @@ def search_autocomplete(request):
         })
     
     return JsonResponse({'results': results})
+
+def load_more_events(request):
+    """AJAX endpoint for infinite scroll - load more events"""
+    from django.core.paginator import Paginator
+    
+    page = int(request.GET.get('page', 1))
+    per_page = 12
+    
+    # Get query parameters
+    query_params = request.GET
+    
+    # Build queryset with filters
+    queryset = Event.objects.filter(
+        is_active=True,
+        start_date__gte=datetime.now().date()
+    ).select_related('city', 'host').prefetch_related('images', 'reviews')
+    
+    # Apply filters
+    search_query = query_params.get('q', '').strip()
+    if search_query:
+        queryset = queryset.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query) |
+            Q(city__name__icontains=search_query) |
+            Q(category__icontains=search_query)
+        )
+    
+    location = query_params.get('location', '').strip()
+    if location:
+        queryset = queryset.filter(
+            Q(city__name__icontains=location) |
+            Q(location__icontains=location) |
+            Q(city__state__icontains=location)
+        )
+    
+    category = query_params.get('category', '').strip()
+    if category and category != 'all':
+        queryset = queryset.filter(category=category)
+    
+    city = query_params.get('city', '').strip()
+    if city:
+        queryset = queryset.filter(city__slug=city)
+    
+    date = query_params.get('date', '').strip()
+    if date:
+        try:
+            event_date = datetime.strptime(date, '%Y-%m-%d').date()
+            queryset = queryset.filter(
+                start_date__lte=event_date,
+                end_date__gte=event_date
+            )
+        except ValueError:
+            pass
+    
+    # Sort
+    sort = query_params.get('sort', '-created_at')
+    if sort == 'popular':
+        queryset = queryset.annotate(
+            booking_count=Count('bookings')
+        ).order_by('-booking_count')
+    else:
+        queryset = queryset.order_by(sort)
+    
+    # Paginate
+    paginator = Paginator(queryset.distinct(), per_page)
+    events_page = paginator.get_page(page)
+    
+    # Build JSON response
+    events_data = []
+    for event in events_page:
+        image_url = event.images.first().image.url if event.images.first() else 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500'
+        
+        events_data.append({
+            'slug': event.slug,
+            'title': event.title,
+            'city': event.city.name,
+            'state': event.city.state,
+            'price': float(event.price),
+            'image_url': image_url,
+            'start_date': event.start_date.strftime('%b %d, %Y'),
+            'end_date': event.end_date.strftime('%b %d, %Y'),
+            'same_date': event.start_date == event.end_date,
+            'average_rating': float(event.average_rating()) if event.average_rating() > 0 else 0,
+            'detail_url': event.get_absolute_url()
+        })
+    
+    return JsonResponse({
+        'events': events_data,
+        'has_next': events_page.has_next(),
+        'current_page': page,
+        'total_pages': paginator.num_pages
+    })
 
 
 def signup(request):

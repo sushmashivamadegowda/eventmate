@@ -368,6 +368,28 @@
                     </div>
                 </div>
 
+                <!-- Location Map -->
+                <div style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); border-radius: 16px; border: 2px solid #e2e8f0;">
+                    <h2 style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <span style="font-size: 24px;">🗺️</span>
+                        Event Location
+                    </h2>
+                    <div style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            frameborder="0"
+                            style="border:0;"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q={{ event.location|urlencode }},{{ event.city.name|urlencode }}"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <p style="margin-top: 12px; color: #717171; font-size: 14px;">
+                        📍 {{ event.location }}, {{ event.city.name }}, {{ event.city.state }}
+                    </p>
+                </div>
+
                 {% if event.included %}
                 <h2>What's included</h2>
                 <p>{{ event.included|linebreaks }}</p>

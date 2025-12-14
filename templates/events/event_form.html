@@ -5,291 +5,739 @@
 
 {% block extra_css %}
 <style>
-    .form-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
     }
 
-    .form-container h1 {
+    .form-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease;
+    }
+
+    .form-header h1 {
+        font-size: 42px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .form-header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .form-container {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 50px;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .form-section {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .section-title .icon {
         font-size: 28px;
-        margin-bottom: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .form-group {
         margin-bottom: 24px;
+        animation: fadeIn 1s ease;
     }
 
     .form-group label {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-weight: 600;
-        margin-bottom: 8px;
-        color: #222;
+        margin-bottom: 10px;
+        color: #2d3748;
+        font-size: 15px;
+    }
+
+    .form-group label .label-icon {
+        font-size: 18px;
     }
 
     .form-group input,
     .form-group select,
     .form-group textarea {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 14px;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
         font-family: inherit;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
     }
 
     .form-group textarea {
         resize: vertical;
         min-height: 120px;
+        line-height: 1.6;
     }
 
     .form-group small {
         display: block;
-        margin-top: 4px;
-        color: #717171;
+        margin-top: 6px;
+        color: #718096;
         font-size: 13px;
+        font-style: italic;
     }
 
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        gap: 24px;
     }
 
     .error {
-        color: #dc3545;
+        color: #e53e3e;
         font-size: 13px;
-        margin-top: 4px;
-    }
-
-    .form-actions {
+        margin-top: 6px;
+        font-weight: 500;
         display: flex;
-        gap: 12px;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .error::before {
+        content: "⚠️";
+        font-size: 14px;
+    }
+
+    .image-upload-section {
         margin-top: 32px;
-        padding-top: 24px;
-        border-top: 1px solid #ddd;
-    }
-
-    .btn-primary {
-        background: #FF385C;
-        color: white;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
-    .btn-primary:hover {
-        background: #E31C5F;
-    }
-
-    .btn-secondary {
-        background: white;
-        color: #222;
-        border: 1px solid #ddd;
-        padding: 14px 32px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .btn-secondary:hover {
-        background: #f7f7f7;
+        padding: 32px;
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        border-radius: 16px;
+        border: 2px dashed #667eea;
     }
 
     .image-upload {
-        border: 2px dashed #ddd;
-        border-radius: 8px;
-        padding: 32px;
+        border: 3px dashed #667eea;
+        border-radius: 16px;
+        padding: 48px 32px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-upload::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 0;
+    }
+
+    .image-upload:hover::before {
+        opacity: 0.05;
     }
 
     .image-upload:hover {
-        border-color: #FF385C;
-        background: #fff5f7;
+        border-color: #764ba2;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+    }
+
+    .image-upload > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .image-upload .upload-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        animation: bounce 2s infinite;
+    }
+
+    .image-upload p {
+        color: #2d3748;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .image-upload small {
+        color: #718096;
+        font-size: 14px;
     }
 
     .image-upload input[type="file"] {
         display: none;
     }
 
+    .image-preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+    }
+
+    .image-preview {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .image-preview:hover {
+        transform: scale(1.05);
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-preview .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(239, 68, 68, 0.95);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .image-preview .remove-btn:hover {
+        background: #dc2626;
+        transform: rotate(90deg);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .btn-primary {
+        flex: 1;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 18px 40px;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        flex: 1;
+        background: white;
+        color: #2d3748;
+        border: 2px solid #e2e8f0;
+        padding: 18px 40px;
+        border-radius: 12px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-secondary:hover {
+        background: #f7fafc;
+        border-color: #cbd5e0;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
     @media (max-width: 768px) {
         .form-container {
-            padding: 24px;
+            padding: 32px 24px;
         }
 
         .form-row {
             grid-template-columns: 1fr;
         }
+
+        .form-header h1 {
+            font-size: 32px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+
+    .voice-btn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .voice-btn:hover {
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+    }
+
+    .voice-btn.listening {
+        animation: pulse 1.5s infinite;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: translateY(-50%) scale(1.15);
+            opacity: 0.8;
+        }
+    }
+
+    .map-preview-container {
+        margin-top: 20px;
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        border-radius: 16px;
+        padding: 20px;
+        border: 2px solid #e2e8f0;
+        animation: fadeIn 0.6s ease;
+    }
+
+    .map-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+
+    .map-header .map-icon {
+        font-size: 20px;
+    }
+
+    .map-preview {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: #f8fafc;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="form-container">
-        <h1>{% if event %}Edit Event{% else %}Create New Event{% endif %}</h1>
+<div class="form-wrapper">
+    <div class="form-header">
+        <h1>{% if event %}✨ Edit Your Event{% else %}🎉 Create Amazing Event{% endif %}</h1>
+        <p>{% if event %}Update your event details to keep attendees informed{% else %}Share your event with the world and make it unforgettable{% endif %}</p>
+    </div>
 
-        <form method="POST" enctype="multipart/form-data">
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data" id="eventForm">
             {% csrf_token %}
             
             {% if form.non_field_errors %}
-                <div class="error" style="margin-bottom: 20px; padding: 12px; background: #f8d7da; border-radius: 8px;">
+                <div class="error" style="margin-bottom: 24px; padding: 16px; background: #fee; border-radius: 12px; border-left: 4px solid #e53e3e;">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
 
-            <div class="form-group">
-                <label for="id_title">Event Title *</label>
-                {{ form.title }}
-                {% if form.title.errors %}
-                    <div class="error">{{ form.title.errors }}</div>
-                {% endif %}
-            </div>
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="icon">📝</span>
+                    Basic Information
+                </h2>
 
-            <div class="form-group">
-                <label for="id_description">Description *</label>
-                {{ form.description }}
-                <small>Provide a detailed description of your event</small>
-                {% if form.description.errors %}
-                    <div class="error">{{ form.description.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-row">
                 <div class="form-group">
-                    <label for="id_category">Category *</label>
-                    {{ form.category }}
-                    {% if form.category.errors %}
-                        <div class="error">{{ form.category.errors }}</div>
+                    <label for="id_title">
+                        <span class="label-icon">🎯</span>
+                        Event Title *
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="error">{{ form.title.errors }}</div>
                     {% endif %}
                 </div>
 
                 <div class="form-group">
-                    <label for="id_city">City *</label>
-                    {{ form.city }}
-                    {% if form.city.errors %}
-                        <div class="error">{{ form.city.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="id_location">Venue/Location *</label>
-                {{ form.location }}
-                <small>Venue name or full address</small>
-                {% if form.location.errors %}
-                    <div class="error">{{ form.location.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="id_start_date">Start Date *</label>
-                    {{ form.start_date }}
-                    {% if form.start_date.errors %}
-                        <div class="error">{{ form.start_date.errors }}</div>
+                    <label for="id_description">
+                        <span class="label-icon">📄</span>
+                        Description *
+                    </label>
+                    {{ form.description }}
+                    <small>✍️ Provide a compelling description that captures the essence of your event</small>
+                    {% if form.description.errors %}
+                        <div class="error">{{ form.description.errors }}</div>
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <label for="id_end_date">End Date *</label>
-                    {{ form.end_date }}
-                    {% if form.end_date.errors %}
-                        <div class="error">{{ form.end_date.errors }}</div>
-                    {% endif %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_category">
+                            <span class="label-icon">🏷️</span>
+                            Category *
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <div class="error">{{ form.category.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_city">
+                            <span class="label-icon">🏙️</span>
+                            City *
+                        </label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                            <div class="error">{{ form.city.errors }}</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="id_start_time">Start Time (Optional)</label>
-                {{ form.start_time }}
-                {% if form.start_time.errors %}
-                    <div class="error">{{ form.start_time.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="id_price">Price per Ticket  *</label>
-                    {{ form.price }}
-                    {% if form.price.errors %}
-                        <div class="error">{{ form.price.errors }}</div>
-                    {% endif %}
-                </div>
+            <!-- Location Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="icon">📍</span>
+                    Location Details
+                </h2>
 
                 <div class="form-group">
-                    <label for="id_capacity">Total Capacity *</label>
-                    {{ form.capacity }}
-                    <small>Maximum number of attendees</small>
-                    {% if form.capacity.errors %}
-                        <div class="error">{{ form.capacity.errors }}</div>
+                    <label for="id_location">
+                        <span class="label-icon">🗺️</span>
+                        Venue/Location *
+                    </label>
+                    <div style="position: relative;">
+                        {{ form.location }}
+                        <button type="button" id="voiceBtn" class="voice-btn" title="Voice input">
+                            🎤
+                        </button>
+                    </div>
+                    <small>📌 Enter venue name or full address for easy navigation</small>
+                    {% if form.location.errors %}
+                        <div class="error">{{ form.location.errors }}</div>
+                    {% endif %}
+                    
+                    <!-- Map Preview -->
+                    <div class="map-preview-container">
+                        <div class="map-header">
+                            <span class="map-icon">🗺️</span>
+                            <span>Location Preview</span>
+                        </div>
+                        <div id="mapPreview" class="map-preview">
+                            <iframe
+                                id="mapFrame"
+                                width="100%"
+                                height="100%"
+                                frameborder="0"
+                                style="border:0; border-radius: 8px;"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Space+Needle,Seattle+WA"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <small style="margin-top: 8px; display: block;">ℹ️ Map will update as you type or use voice input</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date & Time Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="icon">📅</span>
+                    Date & Time
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_start_date">
+                            <span class="label-icon">🗓️</span>
+                            Start Date *
+                        </label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}
+                            <div class="error">{{ form.start_date.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_end_date">
+                            <span class="label-icon">🗓️</span>
+                            End Date *
+                        </label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}
+                            <div class="error">{{ form.end_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_start_time">
+                        <span class="label-icon">🕐</span>
+                        Start Time (Optional)
+                    </label>
+                    {{ form.start_time }}
+                    <small>⏰ Add start time to help attendees plan their arrival</small>
+                    {% if form.start_time.errors %}
+                        <div class="error">{{ form.start_time.errors }}</div>
                     {% endif %}
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="id_included">What's Included</label>
-                {{ form.included }}
-                <small>List what's included in the ticket price</small>
-                {% if form.included.errors %}
-                    <div class="error">{{ form.included.errors }}</div>
-                {% endif %}
+            <!-- Pricing & Capacity Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="icon">💰</span>
+                    Pricing & Capacity
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_price">
+                            <span class="label-icon">💵</span>
+                            Price per Ticket *
+                        </label>
+                        {{ form.price }}
+                        <small>💳 Set competitive pricing (Enter 0 for free events)</small>
+                        {% if form.price.errors %}
+                            <div class="error">{{ form.price.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_capacity">
+                            <span class="label-icon">👥</span>
+                            Total Capacity *
+                        </label>
+                        {{ form.capacity }}
+                        <small>🎫 Maximum number of attendees allowed</small>
+                        {% if form.capacity.errors %}
+                            <div class="error">{{ form.capacity.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="id_things_to_know">Things to Know</label>
-                {{ form.things_to_know }}
-                <small>Important information for attendees</small>
-                {% if form.things_to_know.errors %}
-                    <div class="error">{{ form.things_to_know.errors }}</div>
-                {% endif %}
+            <!-- Additional Details Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="icon">ℹ️</span>
+                    Additional Details
+                </h2>
+
+                <div class="form-group">
+                    <label for="id_included">
+                        <span class="label-icon">✅</span>
+                        What's Included
+                    </label>
+                    {{ form.included }}
+                    <small>🎁 List all benefits and items included in the ticket price</small>
+                    {% if form.included.errors %}
+                        <div class="error">{{ form.included.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_things_to_know">
+                        <span class="label-icon">💡</span>
+                        Things to Know
+                    </label>
+                    {{ form.things_to_know }}
+                    <small>📋 Important information attendees should know before booking</small>
+                    {% if form.things_to_know.errors %}
+                        <div class="error">{{ form.things_to_know.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_cancellation_policy">
+                        <span class="label-icon">🔄</span>
+                        Cancellation Policy
+                    </label>
+                    {{ form.cancellation_policy }}
+                    <small>📝 Define your refund and cancellation terms</small>
+                    {% if form.cancellation_policy.errors %}
+                        <div class="error">{{ form.cancellation_policy.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_age_restriction">
+                        <span class="label-icon">🔞</span>
+                        Age Restriction
+                    </label>
+                    {{ form.age_restriction }}
+                    <small>👶 e.g., "All ages", "18+", "21+"</small>
+                    {% if form.age_restriction.errors %}
+                        <div class="error">{{ form.age_restriction.errors }}</div>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="id_cancellation_policy">Cancellation Policy</label>
-                {{ form.cancellation_policy }}
-                {% if form.cancellation_policy.errors %}
-                    <div class="error">{{ form.cancellation_policy.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                <label for="id_age_restriction">Age Restriction</label>
-                {{ form.age_restriction }}
-                <small>e.g., "All ages", "18+", "21+"</small>
-                {% if form.age_restriction.errors %}
-                    <div class="error">{{ form.age_restriction.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                <label>Event Images</label>
+            <!-- Image Upload Section -->
+            <div class="image-upload-section">
+                <h2 class="section-title">
+                    <span class="icon">🖼️</span>
+                    Event Images
+                </h2>
+                
                 <div class="image-upload" onclick="document.getElementById('imageInput').click()">
-                    <div style="font-size: 48px; margin-bottom: 16px;">📷</div>
-                    <p style="color: #717171;">Click to upload event images</p>
-                    <small>You can select multiple images</small>
+                    <div class="upload-icon">📸</div>
+                    <p>Click or drag images here to upload</p>
+                    <small>Select multiple high-quality images to showcase your event</small>
                     <input type="file" id="imageInput" name="images" multiple accept="image/*">
                 </div>
+
+                <div class="image-preview-container" id="imagePreviewContainer"></div>
             </div>
 
             <div class="form-actions">
                 <button type="submit" class="btn-primary">
-                    {% if event %}Update Event{% else %}Create Event{% endif %}
+                    {% if event %}💫 Update Event{% else %}🚀 Create Event{% endif %}
                 </button>
                 <a href="{% if event %}{% url 'event_detail' event.slug %}{% else %}{% url 'my_events' %}{% endif %}" class="btn-secondary">
-                    Cancel
+                    ❌ Cancel
                 </a>
             </div>
         </form>
@@ -299,13 +747,119 @@
 
 {% block extra_js %}
 <script>
-    // Preview selected images
-    document.getElementById('imageInput').addEventListener('change', function(e) {
-        const files = e.target.files;
+    // Enhanced image preview with thumbnails
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    let selectedFiles = [];
+
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        selectedFiles = files;
+        
         if (files.length > 0) {
-            const uploadDiv = document.querySelector('.image-upload');
-            uploadDiv.querySelector('p').textContent = `${files.length} image${files.length > 1 ? 's' : ''} selected`;
+            const uploadDiv = document.querySelector('.image-upload p');
+            uploadDiv.textContent = `${files.length} image${files.length > 1 ? 's' : ''} selected`;
+            
+            // Clear previous previews
+            previewContainer.innerHTML = '';
+            
+            // Create previews for each image
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button type="button" class="remove-btn" onclick="removeImage(${index})">✕</button>
+                    `;
+                    previewContainer.appendChild(preview);
+                };
+                
+                reader.readAsDataURL(file);
+            });
         }
     });
+
+    // Function to remove image from preview
+    window.removeImage = function(index) {
+        selectedFiles.splice(index, 1);
+        
+        // Update the file input
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        imageInput.files = dataTransfer.files;
+        
+        // Trigger change event to update preview
+        imageInput.dispatchEvent(new Event('change'));
+        
+        if (selectedFiles.length === 0) {
+            document.querySelector('.image-upload p').textContent = 'Click or drag images here to upload';
+        }
+    };
+
+    // Form validation enhancements
+    const form = document.getElementById('eventForm');
+    form.addEventListener('submit', function(e) {
+        // Add any custom validation here
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.style.borderColor = '#e53e3e';
+            } else {
+                field.style.borderColor = '#e2e8f0';
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields marked with *');
+        }
+    });
+
+    // Voice input for location field
+    const voiceBtn = document.getElementById('voiceBtn');
+    const locationInput = document.getElementById('id_location');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        voiceBtn.addEventListener('click', function() {
+            recognition.start();
+            voiceBtn.classList.add('listening');
+            locationInput.placeholder = 'Listening...';
+        });
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            locationInput.value = transcript;
+            voiceBtn.classList.remove('listening');
+            locationInput.placeholder = '';
+        };
+
+        recognition.onerror = function(event) {
+            voiceBtn.classList.remove('listening');
+            locationInput.placeholder = '';
+            if (event.error !== 'no-speech') {
+                alert('Voice recognition error: ' + event.error);
+            }
+        };
+
+        recognition.onend = function() {
+            voiceBtn.classList.remove('listening');
+            locationInput.placeholder = '';
+        };
+    } else {
+        voiceBtn.style.display = 'none';
+    }
 </script>
 {% endblock %}

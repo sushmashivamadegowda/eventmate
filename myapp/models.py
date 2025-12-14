@@ -98,6 +98,10 @@ class Event(models.Model):
             models.Index(fields=['category', 'is_active']),
             models.Index(fields=['start_date', 'is_active']),
             models.Index(fields=['city', 'is_active']),
+            models.Index(fields=['slug']),
+            models.Index(fields=['is_active', 'start_date', 'city']),
+            models.Index(fields=['is_featured', 'is_active']),
+            models.Index(fields=['host', 'is_active']),
         ]
     
     def save(self, *args, **kwargs):
@@ -173,6 +177,12 @@ class Booking(models.Model):
     
     class Meta:
         ordering = ['-booking_date']
+        indexes = [
+            models.Index(fields=['user', 'status']),
+            models.Index(fields=['event', 'status']),
+            models.Index(fields=['booking_date']),
+            models.Index(fields=['is_paid', 'status']),
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.event.title} ({self.tickets} tickets)"
@@ -193,6 +203,10 @@ class Review(models.Model):
     class Meta:
         ordering = ['-created_at']
         unique_together = ['user', 'event']
+        indexes = [
+            models.Index(fields=['event', '-created_at']),
+            models.Index(fields=['user', '-created_at']),
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.event.title} ({self.rating}★)"
@@ -206,6 +220,10 @@ class Favorite(models.Model):
     
     class Meta:
         unique_together = ['user', 'event']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['event']),
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.event.title}"
