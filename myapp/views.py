@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -225,6 +226,8 @@ class EventDetailView(DetailView):
         # Add today's date for template comparison
         context['today'] = datetime.now().date()
         
+        context['google_maps_api_key'] = settings.GOOGLE_MAPS_API_KEY
+        
         return context
 
 
@@ -257,7 +260,10 @@ def create_event(request):
     else:
         form = EventForm()
     
-    return render(request, 'events/event_form.html', {'form': form})
+    return render(request, 'events/event_form.html', {
+        'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
+    })
 
 
 @login_required
@@ -290,7 +296,8 @@ def update_event(request, slug):
     
     return render(request, 'events/event_form.html', {
         'form': form,
-        'event': event
+        'event': event,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     })
 
 

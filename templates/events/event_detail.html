@@ -120,7 +120,7 @@
         padding: 24px;
         position: sticky;
         top: 100px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
     }
 
     .booking-price {
@@ -289,14 +289,15 @@
                     <h1>{{ event.title }}</h1>
                     <div class="event-info">
                         {% if average_rating > 0 %}
-                            <span>⭐ {{ average_rating|floatformat:1 }} ({{ review_count }} review{{ review_count|pluralize }})</span>
+                        <span>⭐ {{ average_rating|floatformat:1 }} ({{ review_count }} review{{ review_count|pluralize
+                            }})</span>
                         {% endif %}
                         <span>📍 {{ event.location }}</span>
                     </div>
                 </div>
                 {% if user.is_authenticated %}
-                <button class="favorite-btn {% if is_favorited %}active{% endif %}" 
-                        onclick="toggleFavorite('{{ event.slug }}', this)">
+                <button class="favorite-btn {% if is_favorited %}active{% endif %}"
+                    onclick="toggleFavorite('{{ event.slug }}', this)">
                     ❤️ {% if is_favorited %}Saved{% else %}Save{% endif %}
                 </button>
                 {% endif %}
@@ -305,16 +306,17 @@
 
         <div class="event-images">
             {% if event.images.all %}
-                {% for image in event.images.all|slice:":5" %}
-                    <img src="{{ image.image.url }}" alt="{{ event.title }}" 
-                         {% if forloop.first %}class="main-image"{% endif %}>
-                {% endfor %}
+            {% for image in event.images.all|slice:":5" %}
+            <img src="{{ image.image.url }}" alt="{{ event.title }}" {% if forloop.first %}class="main-image" {% endif
+                %}>
+            {% endfor %}
             {% else %}
-                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800" alt="{{ event.title }}" class="main-image">
-                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400" alt="Event">
-                <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400" alt="Event">
-                <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400" alt="Event">
-                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400" alt="Event">
+            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800" alt="{{ event.title }}"
+                class="main-image">
+            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400" alt="Event">
+            <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400" alt="Event">
+            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400" alt="Event">
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400" alt="Event">
             {% endif %}
         </div>
 
@@ -330,12 +332,12 @@
                             <strong>Date</strong>
                             <span>
                                 {% if event.start_date == event.end_date %}
-                                    {{ event.start_date|date:"F d, Y" }}
+                                {{ event.start_date|date:"F d, Y" }}
                                 {% else %}
-                                    {{ event.start_date|date:"F d" }} - {{ event.end_date|date:"d, Y" }}
+                                {{ event.start_date|date:"F d" }} - {{ event.end_date|date:"d, Y" }}
                                 {% endif %}
                                 {% if event.start_time %}
-                                    at {{ event.start_time|time:"g:i A" }}
+                                at {{ event.start_time|time:"g:i A" }}
                                 {% endif %}
                             </span>
                         </div>
@@ -369,19 +371,17 @@
                 </div>
 
                 <!-- Location Map -->
-                <div style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); border-radius: 16px; border: 2px solid #e2e8f0;">
+                <div
+                    style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); border-radius: 16px; border: 2px solid #e2e8f0;">
                     <h2 style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
                         <span style="font-size: 24px;">🗺️</span>
                         Event Location
                     </h2>
-                    <div style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                        <iframe
-                            width="100%"
-                            height="100%"
-                            frameborder="0"
-                            style="border:0;"
+                    <div
+                        style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                        <iframe width="100%" height="100%" frameborder="0" style="border:0;"
                             referrerpolicy="no-referrer-when-downgrade"
-                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q={{ event.location|urlencode }},{{ event.city.name|urlencode }}"
+                            src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_api_key }}&q={{ event.location|urlencode }},{{ event.city.name|urlencode }}"
                             allowfullscreen>
                         </iframe>
                     </div>
@@ -411,11 +411,13 @@
                 <!-- Reviews Section -->
                 <div class="reviews-section">
                     <div class="reviews-header">
-                        <h2>⭐ {{ average_rating|floatformat:1 }} · {{ review_count }} review{{ review_count|pluralize }}</h2>
+                        <h2>⭐ {{ average_rating|floatformat:1 }} · {{ review_count }} review{{ review_count|pluralize }}
+                        </h2>
                         {% if user.is_authenticated %}
-                            <button class="add-review-btn" onclick="document.getElementById('reviewForm').scrollIntoView({behavior: 'smooth'})">
-                                Write a Review
-                            </button>
+                        <button class="add-review-btn"
+                            onclick="document.getElementById('reviewForm').scrollIntoView({behavior: 'smooth'})">
+                            Write a Review
+                        </button>
                         {% endif %}
                     </div>
 
@@ -435,73 +437,70 @@
                             </div>
                             <div class="review-rating">
                                 {% for i in "12345" %}
-                                    {% if forloop.counter <= review.rating %}⭐{% endif %}
-                                {% endfor %}
+                                {% if forloop.counter <= review.rating %}⭐{% endif %} {% endfor %} </div>
                             </div>
+                            <p class="review-comment">{{ review.comment }}</p>
                         </div>
-                        <p class="review-comment">{{ review.comment }}</p>
-                    </div>
-                    {% empty %}
-                    <p style="color: #717171;">No reviews yet. Be the first to review!</p>
-                    {% endfor %}
+                        {% empty %}
+                        <p style="color: #717171;">No reviews yet. Be the first to review!</p>
+                        {% endfor %}
 
-                    {% if user.is_authenticated %}
-                    <div id="reviewForm" style="margin-top: 32px; padding-top: 32px; border-top: 1px solid #ddd;">
-                        <h3>Leave a Review</h3>
-                        <form method="POST" action="{% url 'add_review' event.slug %}">
-                            {% csrf_token %}
-                            <div style="margin: 20px 0;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating</label>
-                                <div style="display: flex; gap: 10px;">
-                                    {% for i in "12345" %}
-                                    <label>
-                                        <input type="radio" name="rating" value="{{ forloop.counter }}" required>
-                                        {{ forloop.counter }}★
-                                    </label>
-                                    {% endfor %}
+                        {% if user.is_authenticated %}
+                        <div id="reviewForm" style="margin-top: 32px; padding-top: 32px; border-top: 1px solid #ddd;">
+                            <h3>Leave a Review</h3>
+                            <form method="POST" action="{% url 'add_review' event.slug %}">
+                                {% csrf_token %}
+                                <div style="margin: 20px 0;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating</label>
+                                    <div style="display: flex; gap: 10px;">
+                                        {% for i in "12345" %}
+                                        <label>
+                                            <input type="radio" name="rating" value="{{ forloop.counter }}" required>
+                                            {{ forloop.counter }}★
+                                        </label>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="margin: 20px 0;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Your Review</label>
-                                <textarea name="comment" rows="4" required 
-                                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
-                            </div>
-                            <button type="submit" class="add-review-btn">Submit Review</button>
-                        </form>
+                                <div style="margin: 20px 0;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Your
+                                        Review</label>
+                                    <textarea name="comment" rows="4" required
+                                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+                                </div>
+                                <button type="submit" class="add-review-btn">Submit Review</button>
+                            </form>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
-            </div>
 
-            <div>
-                <div class="booking-card">
-                    <div class="booking-price">
-                        {{ event.price }} <span style="font-size: 16px; font-weight: normal;">per ticket</span>
-                    </div>
+                <div>
+                    <div class="booking-card">
+                        <div class="booking-price">
+                            {{ event.price }} <span style="font-size: 16px; font-weight: normal;">per ticket</span>
+                        </div>
 
-                    {% if event.is_sold_out %}
-                        <div style="background: #f8d7da; padding: 16px; border-radius: 8px; text-align: center; color: #721c24; font-weight: 600;">
+                        {% if event.is_sold_out %}
+                        <div
+                            style="background: #f8d7da; padding: 16px; border-radius: 8px; text-align: center; color: #721c24; font-weight: 600;">
                             Sold Out
                         </div>
-                    {% else %}
+                        {% else %}
                         <form method="POST" action="{% url 'create_booking' event.slug %}">
                             {% csrf_token %}
                             <div class="booking-dates">
                                 <div class="date-input">
                                     <label>EVENT DATE</label>
-                                    <input type="date" name="event_date" 
-                                           min="{{ event.start_date|date:'Y-m-d' }}" 
-                                           max="{{ event.end_date|date:'Y-m-d' }}" 
-                                           required>
+                                    <input type="date" name="event_date" min="{{ event.start_date|date:'Y-m-d' }}"
+                                        max="{{ event.end_date|date:'Y-m-d' }}" required>
                                 </div>
                             </div>
 
                             <div class="booking-dates">
                                 <div class="date-input">
                                     <label>NUMBER OF TICKETS</label>
-                                    <input type="number" name="tickets" min="1" 
-                                           max="{{ event.tickets_remaining }}" 
-                                           value="1" required>
+                                    <input type="number" name="tickets" min="1" max="{{ event.tickets_remaining }}"
+                                        value="1" required>
                                 </div>
                             </div>
 
@@ -510,54 +509,55 @@
                             </p>
 
                             {% if user.is_authenticated %}
-                                <button type="submit" class="reserve-btn">Reserve</button>
-                                <div class="booking-note">You won't be charged yet</div>
+                            <button type="submit" class="reserve-btn">Reserve</button>
+                            <div class="booking-note">You won't be charged yet</div>
                             {% else %}
-                                <a href="{% url 'login' %}?next={{ request.path }}" class="reserve-btn" style="display: block; text-align: center; text-decoration: none;">
-                                    Login to Book
-                                </a>
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="reserve-btn"
+                                style="display: block; text-align: center; text-decoration: none;">
+                                Login to Book
+                            </a>
                             {% endif %}
                         </form>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}
 
-{% block extra_js %}
-<script>
-function toggleFavorite(slug, button) {
-    fetch(`/events/event/${slug}/favorite/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            'X-Requested-With': 'XMLHttpRequest'
+    {% block extra_js %}
+    <script>
+        function toggleFavorite(slug, button) {
+            fetch(`/events/event/${slug}/favorite/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        button.classList.toggle('active');
+                        button.innerHTML = data.is_favorited ? '❤️ Saved' : '❤️ Save';
+                    }
+                });
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            button.classList.toggle('active');
-            button.innerHTML = data.is_favorited ? '❤️ Saved' : '❤️ Save';
-        }
-    });
-}
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
+            return cookieValue;
         }
-    }
-    return cookieValue;
-}
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}
